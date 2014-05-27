@@ -1,0 +1,53 @@
+# /etc/inittab
+#
+# Copyright (C) 2001 Erik Andersen <andersen@codepoet.org>
+#
+# Note: BusyBox init doesn't support runlevels.  The runlevels field is
+# completely ignored by BusyBox init. If you want runlevels, use
+# sysvinit.
+#
+# Format for each entry: <id>:<runlevels>:<action>:<process>
+#
+# id        == tty to run on, or empty for /dev/console
+# runlevels == ignored
+# action    == one of sysinit, respawn, askfirst, wait, and once
+# process   == program to run
+
+# Startup the system
+null::sysinit:/bin/mount -o remount,rw / # REMOUNT_ROOTFS_RW
+null::sysinit:/bin/mount -t proc proc /proc
+::sysinit:/bin/mount -t sysfs none /sys
+#::sysinit:/bin/mount -t tmpfs mdev /dev
+::sysinit:/bin/echo /sbin/mdev > /proc/sys/kernel/hotplug
+::sysinit:/sbin/mdev -s
+#::sysinit:/bin/mkdir -p -m 0755 /dev/pts
+#::sysinit:/bin/mount -t devpts devpts /dev/pts
+#::sysinit:/bin/mount -t tmpfs tmpfs /tmp
+::sysinit:/bin/mknod /dev/media0 c 253 0
+null::sysinit:/bin/mkdir -p /dev/pts
+null::sysinit:/bin/mkdir -p /dev/shm
+null::sysinit:/bin/mount -a
+null::sysinit:/bin/hostname -F /etc/hostname
+# now run any rc scripts
+::sysinit:/etc/init.d/rcS
+
+::sysinit:/bin/mount -t vfat /dev/mmcblk0p1 /mnt/1
+::sysinit:/bin/mount -t ext2 /dev/mmcblk0p2 /mnt/2
+
+#::respawn:/usr/bin/udpsvd -v -E -u root 0 69 /usr/bin/tftpd -c /test
+
+# Put a getty on the serial port
+#ttyS1::respawn:/sbin/getty -n -L ttyS1 115200 vt100 # GENERIC_SERIAL
+ttyS0::respawn:-/bin/sh
+
+::sysinit:/usr/bin/teplovisor.sh
+
+
+# Stuff to do for the 3-finger salute
+::ctrlaltdel:/sbin/reboot
+
+# Stuff to do before rebooting
+null::shutdown:/etc/init.d/rcK
+null::shutdown:/bin/umount -a -r
+null::shutdown:/sbin/swapoff -a
+

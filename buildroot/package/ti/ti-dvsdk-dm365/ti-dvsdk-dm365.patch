@@ -1,0 +1,138 @@
+diff --git a/linuxutils_2_26_01_02/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.c b/linuxutils_2_26_01_02/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.c
+index 1a9120c..b487b0c 100644
+--- a/linuxutils_2_26_01_02/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.c
++++ b/linuxutils_2_26_01_02/packages/ti/sdo/linuxutils/cmem/src/module/cmemk.c
+@@ -1371,7 +1371,7 @@ static int ioctl(struct inode *inode, struct file *filp,
+                              */
+                             virtp_end = virtp + size;
+ #ifdef USE_CACHE_VOID_ARG
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34)
++#if 1
+                             dmac_map_area((void *)virtp, size, DMA_FROM_DEVICE);
+                             outer_inv_range(__pa((u32)(void *)virtp),
+                                             __pa((u32)(void *)virtp_end));
+@@ -1612,7 +1612,7 @@ static int ioctl(struct inode *inode, struct file *filp,
+             switch (cmd & ~CMEM_IOCMAGIC) {
+               case CMEM_IOCCACHEWB:
+ #ifdef USE_CACHE_VOID_ARG
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34)
++#if 1
+                 dmac_map_area((void *)virtp, block.size, DMA_TO_DEVICE);
+                 outer_clean_range(__pa((u32)(void *)virtp),
+                                   __pa((u32)(void *)virtp + block.size));
+@@ -1629,7 +1629,7 @@ static int ioctl(struct inode *inode, struct file *filp,
+ 
+               case CMEM_IOCCACHEINV:
+ #ifdef USE_CACHE_VOID_ARG
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34)
++#if 1
+                 dmac_map_area((void *)virtp, block.size, DMA_FROM_DEVICE);
+                 outer_inv_range(__pa((u32)(void *)virtp),
+                                 __pa((u32)(void *)virtp + block.size));
+@@ -1646,7 +1646,7 @@ static int ioctl(struct inode *inode, struct file *filp,
+ 
+               case CMEM_IOCCACHEWBINV:
+ #ifdef USE_CACHE_VOID_ARG
+-#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,34)
++#if 1
+                 dmac_map_area((void *)virtp, block.size, DMA_BIDIRECTIONAL);
+                 outer_flush_range(__pa((u32)(void *)virtp),
+                                   __pa((u32)(void *)virtp + block.size));
+@@ -2374,8 +2374,6 @@ MODULE_LICENSE("GPL");
+ module_init(cmem_init);
+ module_exit(cmem_exit);
+ 
+-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,34)
+-
+ /*
+  * The following assembly functions were taken from
+  *     arch/arm/mm/proc-arm926.S
+@@ -2479,7 +2477,16 @@ arm926_dma_flush_range:\n \
+         mov     pc, lr\n \
+ ");
+ 
+-#endif
++asm("\n \
++        .global arm926_dma_map_area\n \
++arm926_dma_map_area:\n \
++        add     r1, r1, r0\n \
++@        cmp     r2, #DMA_TO_DEVICE\n \
++        cmp     r2, #1\n \
++        beq     arm926_dma_clean_range\n \
++        bcs     arm926_dma_inv_range\n \
++        b       arm926_dma_flush_range\n \
++");
+ 
+ /*
+  *  @(#) ti.sdo.linuxutils.cmem; 2, 2, 0,142; 11-30-2010 18:31:31; /db/atree/library/trees/linuxutils/linuxutils-j02x/src/ xlibrary
+
+--- a/linuxutils_2_26_01_02/packages/ti/sdo/linuxutils/irq/src/module/irqk.c	2011-03-25 06:34:46.000000000 +0600
++++ b/linuxutils_2_26_01_02/packages/ti/sdo/linuxutils/irq/src/module/irqk.c	2012-10-17 23:24:30.000000000 +0700
+@@ -92,6 +92,11 @@
+ #undef USE_CLASS_DEVICE
+ #undef USE_CLASS_SIMPLE
+ 
++#include <linux/slab.h>
++
++#define init_MUTEX(x) sema_init(x,1)
++#define init_MUTEX_LOCKED(x) sema_init(x,0)
++
+ #elif LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,18)
+ 
+ #warning *** not a warning *** Note: 2.6.26 > LINUX_VERSION_CODE >= 2.6.18
+diff --git a/dm365mm-module_01_00_03/module/dm365mmap.c b/dm365mm-module_01_00_03/module/dm365mmap.c
+index 1522bff..63a5435 100644
+--- a/dm365mm-module_01_00_03/module/dm365mmap.c
++++ b/dm365mm-module_01_00_03/module/dm365mmap.c
+@@ -86,7 +86,13 @@ static int major = 0;
+ static struct class *dm365mmap_class;
+ #endif
+ 
+-static DECLARE_MUTEX(dm365mmap_reply_mutex);
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,36)
++  static DEFINE_SEMAPHORE(dm365mmap_reply_mutex);
++#else
++  static DECLARE_MUTEX(dm365mmap_reply_mutex);
++#endif
++
++
+ static struct completion edmacompletion;
+ 
+ /* Forward declaration of system calls */
+@@ -95,7 +101,17 @@ static int ioctl(struct inode *inode, struct file *filp, unsigned int cmd,
+ static int mmap(struct file *filp, struct vm_area_struct *vma);
+ static int open(struct inode *inode, struct file *filp);
+ static int release(struct inode *inode, struct file *filp);
+-static struct file_operations dm365mmap_fxns = { ioctl: ioctl, mmap: mmap, open: open, release:release
++
++static struct file_operations dm365mmap_fxns = {
++	owner:   THIS_MODULE,
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,36)
++	unlocked_ioctl: ioctl,
++#else
++	ioctl:   ioctl,
++#endif
++	mmap: mmap,
++	open: open,
++	release:release
+ };
+ 
+ #ifdef MJCPCLK_ENABLE
+@@ -153,7 +169,7 @@ static int ioctl(struct inode *inode, struct file *filp, unsigned int cmd,
+              */
+         case DM365MMAP_IOCCLEAR_PENDING:
+             __D("Clear Pending Call received.\n");
+-            init_MUTEX_LOCKED(&dm365mmap_reply_mutex);
++	    sema_init(&dm365mmap_reply_mutex, 0);
+             break;
+ 
+             /*
+@@ -279,7 +295,7 @@ int __init dm365mmap_init(void)
+     }
+ 
+ #endif /*  */
+-    init_MUTEX_LOCKED(&dm365mmap_reply_mutex);
++    sema_init(&dm365mmap_reply_mutex, 0);
+     return 0;
+ }
+ 
