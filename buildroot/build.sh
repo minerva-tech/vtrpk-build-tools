@@ -1,6 +1,13 @@
 #!/bin/sh
 
-(cd output/build/linux-custom && rm -f .stamp_built  .stamp_images_installed  .stamp_initramfs_rebuilt .stamp_target_installed)
+rm -fR output
+
+cp -f configs/vrtpk_0_defconfig .config
+make oldconfig
 
 make || exit 1
 
+cp -f configs/vrtpk_defconfig .config
+make oldconfig
+
+make || exit 1
