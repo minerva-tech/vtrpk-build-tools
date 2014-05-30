@@ -340,21 +340,22 @@ Uint32 DEVICE_init()
    // System PSC setup - enable all
   DEVICE_PSCInit();
   
-  DEVICE_pinmuxControl(0,0xFFFFFFFF,0x00FD0000);  // All Video Inputs
-  DEVICE_pinmuxControl(1,0xFFFFFFFF,0x00145555);  // All Video Outputs
+  DEVICE_pinmuxControl(0,0xFFFFFFFF,0x00000000);  // All Video Inputs
+  DEVICE_pinmuxControl(1,0xFFFFFFFF,0x00030000);  // All Video Outputs
   DEVICE_pinmuxControl(2,0xFFFFFFFF,0x000000DA);  // EMIFA
   DEVICE_pinmuxControl(3,0xFFFFFFFF,0x36BD0000);  // SPI0, SPI1, UART1, I2C, SD0, SD1, McBSP0, CLKOUTs
   DEVICE_pinmuxControl(4,0xFFFFFFFF,0xFFD568A0);  // MMC/SD0 instead of MS, SPI0
 
-	GPIO->DIR01 &= 0xfffff6bf;
-    GPIO->DIR23 &= 0xfeffffff;
-    GPIO->DIR45 &= 0xf7faffff;
+	GPIO->DIR01 = 0xfffff6bf;
+    GPIO->DIR23 = 0xfeffffff;
+    GPIO->DIR45 = 0xf7faffff;
 
     GPIO->SETDATA01 = 0x00000840;
     GPIO->CLRDATA01 = 0x00000100;
 
     GPIO->SETDATA45 = 0x08840000;
     GPIO->CLRDATA45 = 0x00010000;
+
 
  
   if (status == E_PASS) status |= DEVICE_PLL1Init();
