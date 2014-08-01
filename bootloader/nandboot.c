@@ -141,22 +141,6 @@ NAND_startAgain:
   gNandBoot.page = *(((Uint32 *)(&rxBuf[16])));   /* The fourth "long" is the page number where Application is stored in NAND */
   gNandBoot.ldAddress = *(((Uint32 *)(&rxBuf[20])));   /* The fifth "long" is the Application load address */
 
-  DEBUG_printString("entry: ");
-  DEBUG_printHexInt(gNandBoot.entryPoint);
-  DEBUG_printString(".\r\n");
-  DEBUG_printString("pages: ");
-  DEBUG_printHexInt(gNandBoot.numPage);
-  DEBUG_printString(".\r\n");
-  DEBUG_printString("block: ");
-  DEBUG_printHexInt(gNandBoot.block);
-  DEBUG_printString(".\r\n");
-  DEBUG_printString("page: ");
-  DEBUG_printHexInt(gNandBoot.page);
-  DEBUG_printString(".\r\n");
-  DEBUG_printString("address: ");
-  DEBUG_printHexInt(gNandBoot.ldAddress);
-  DEBUG_printString(".\r\n");
-
   // If the application is already in binary format, then our 
   // received buffer can point to the specified load address
   // instead of the temp location used for storing an S-record

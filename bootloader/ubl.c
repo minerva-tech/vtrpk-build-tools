@@ -96,14 +96,6 @@ void main(void)
     DEBUG_printHexInt(gEntryPoint);
     DEBUG_printString(".\r\n");
 
-    DEBUG_printString("begin ");
-    DEBUG_printHexInt(*((unsigned int *)gEntryPoint));
-    DEBUG_printString(".\r\n");
-
-    DEBUG_printString("end ");
-    DEBUG_printHexInt(*((unsigned int *)(gEntryPoint + 6639004)));
-    DEBUG_printString(".\r\n");
-
     /* CORE */
 	*tag++ = 2;
 	*tag++ = 0x54410001;
@@ -217,13 +209,13 @@ static Uint32 LOCAL_boot(void)
 
 #endif
     
-  DEBUG_printString("   DONE");
+  //DEBUG_printString("   DONE");
   
   UTIL_waitLoop(10000);
 
   DEVICE_TIMER0Stop();
 
-  return E_PASS;    
+  return E_PASS;
 }
 
 static void LOCAL_bootAbort(void)
