@@ -40,19 +40,19 @@ clean:
 	-rm -f -v *.bin *.asm *.o sft $(SHOEHORN) $(SFH) $(SDH)
 
 ubl_uart.bin: start.S $(UBL_SOURCES) $(UBL_LINKERSCRIPT)
-	$(CC) -DARM297_DDR270_OSC24 $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) -o ubl
+	$(CC) -DARM270_DDR216_OSC24 $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) -o ubl
 	$(OBJDUMP) -dS ubl > ubl_uart.asm
 	$(OBJCOPY) $(OBJCOPYFLAGS) -O binary ubl $@
 	-rm -f ubl
 
 ubl_nand.bin: start.S $(UBL_SOURCES) $(UBL_LINKERSCRIPT)
-	$(CC) -DARM297_DDR270_OSC24 -DUBL_NAND $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) -o ubl
+	$(CC) -DARM270_DDR216_OSC24 -DUBL_NAND $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) -o ubl
 	$(OBJDUMP) -dS ubl > ubl_nand.asm
 	$(OBJCOPY) $(OBJCOPYFLAGS) -O binary ubl $@
 	-rm -f ubl
 
 sft.bin: start.S $(SFT_SOURCES) $(SFT_LINKERSCRIPT) $(MK_UBL)
-	$(CC) -DARM297_DDR270_OSC24 -DUBL_NAND $(CFLAGS) -Wl,-T$(SFT_LINKERSCRIPT) $(SFT_SOURCES) -o sft
+	$(CC) -DARM270_DDR216_OSC24 -DUBL_NAND $(CFLAGS) -Wl,-T$(SFT_LINKERSCRIPT) $(SFT_SOURCES) -o sft
 	$(OBJDUMP) -dS sft > sft.asm
 	$(OBJCOPY) $(OBJCOPYFLAGS) -O binary sft $@
 	-rm -f sft
