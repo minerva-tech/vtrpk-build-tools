@@ -169,6 +169,7 @@ print_usage:
 int main(int argc, char **argv)
 {
     int i;
+    int image_fd;
     unsigned int size;
     unsigned char *p;
     struct sigaction actions;
@@ -244,21 +245,22 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    timeout = 600;
+    timeout = 30 * 60;
 
     read_data(buf,size);
+    printf("\n");
 
     close(fd);
 
-    fd = creat(image, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
-    if (fd < 0) {
+    image_fd = creat(image, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
+    if (image_fd < 0) {
         fprintf(stderr,"Failed to create '%s': %s\n",image,strerror(errno));
         exit(EXIT_FAILURE);
     }
 
     p = buf;
     while (size) {
-        i = write(fd,p,size);
+        i = write(image_fd,p,size);
         if (i < 0) {
             perror("Failed to write image file");
             exit(EXIT_FAILURE);
@@ -267,7 +269,7 @@ int main(int argc, char **argv)
         p += i;
     }
 
-    close(fd);
+    close(image_fd);
 
     return 0;
 }
