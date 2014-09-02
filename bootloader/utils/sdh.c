@@ -130,7 +130,7 @@ parse_args (int argc, char **argv)
     port = port_default;
 
     for (;;) {
-        switch (getopt_long(argc, argv, "p:h", options, &index)) {
+        switch (getopt_long(argc, argv, "p:eh", options, &index)) {
         case -1:
             if (optind < argc) image = argv[optind];
             else               image = default_image;
