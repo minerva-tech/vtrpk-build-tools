@@ -62,6 +62,7 @@ extern far "c" {
 #define UBL_MAGIC_NOR_FLASH         (0xA1ACED99)		/* Download via UART & Burn NOR with UBL and U-boot */
 #define UBL_MAGIC_NOR_ERASE         (0xA1ACEDAA)		/* Download via UART & erase the NOR Flash */
 #define UBL_MAGIC_NAND_READ         (0xA1ACEDBB)
+#define UBL_MAGIC_NAND_READ_ERR     (0xA1ACEDB8)
 #define UBL_MAGIC_NAND_FLASH        (0xA1ACEDCC)		/* Download via UART & Flash NAND with UBL and U-boot */
 #define UBL_MAGIC_NAND_ERASE        (0xA1ACEDDD)		/* Download via UART & erase the NAND Flash */
 #define UBL_MAGIC_SDMMC_FLASH       (0xA1ACEDEE)    /* Download via UART & Burn SD/MMC with UBL and U-boot */

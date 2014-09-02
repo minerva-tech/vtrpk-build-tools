@@ -24,6 +24,8 @@ static int fd = -1;
 
 static int timeout = 15;
 
+static int nand_skip_errors = 0;
+
 static void
 sdh_exit (void)
 {
@@ -114,6 +116,7 @@ put_string (char *s, int length)
 
 static struct option options[] = {
     {"port",       required_argument, 0, 'p'},
+    {"error",      no_argument,       0, 'e'},
     {"help",       no_argument,       0, 'h'},
     {0, 0, 0, 0}
 };
@@ -136,6 +139,9 @@ parse_args (int argc, char **argv)
         case 'p':
             port = optarg;
             break;
+        case 'e':
+            nand_skip_errors = 1;
+            break;
         case 'h':
             goto print_usage;
         case '?':
@@ -154,6 +160,7 @@ print_usage:
     printf("Usage: %s [options] <image>\n"
            "Options:\n"
            "  -p, --port            serial port device, default = '%s'\n"
+           "  -e, --error           ignore errors\n"
            "  -h, --help            print usage and exit\n",
            argv[0], port_default);
     exit(ret);
@@ -210,9 +217,16 @@ int main(int argc, char **argv)
     printf("Waiting for 'BOOTUBL'\n");
     if (wait_string("BOOTUBL",0)) exit(EXIT_FAILURE);
 
-    printf("Send 'UBL_MAGIC_NAND_READ' command\n");
-    put_string("    CMD",8);
-    put_string("a1acedbb",8);
+    if (nand_skip_errors) {
+        printf("Send 'UBL_MAGIC_NAND_READ_ERR' command\n");
+        put_string("    CMD",8);
+        put_string("a1acedb8",8);
+    }
+    else {
+        printf("Send 'UBL_MAGIC_NAND_READ' command\n");
+        put_string("    CMD",8);
+        put_string("a1acedbb",8);
+    }
 
     printf("Waiting for 'DONE'\n");
     if (wait_string("DONE",0)) exit(EXIT_FAILURE);

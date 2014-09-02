@@ -94,6 +94,7 @@ Uint32 UARTBOOT_copy(void)
 #if defined(UBL_NAND)
   NANDBOOT_HeaderObj  nandBoot;
   NAND_InfoHandle     hNandInfo;
+  int nand_skip_errors = 0;
 #elif defined(UBL_NOR)
   NORBOOT_HeaderObj   norBoot;
   NOR_InfoHandle      hNorInfo;
@@ -244,6 +245,8 @@ UART_tryAgain:
       break;
     }
 #elif defined(UBL_NAND)
+    case UBL_MAGIC_NAND_READ_ERR:
+        nand_skip_errors = 1;
     case UBL_MAGIC_NAND_READ:
     {
         Uint32 i,count,blockNum,magicNum,entryPoint,numPage,block,page,ldAddress,readError,failedOnceAlready = 0;
@@ -342,8 +345,10 @@ NAND_read_retry:
             // application header in the NAND flash at the next block.
             if (readError != E_PASS) {
                 if (failedOnceAlready) {
-                    blockNum++;
-                    goto NAND_find_header;
+                    if (!nand_skip_errors) {
+                        blockNum++;
+                        goto NAND_find_header;
+                    }
                 }
                 else {
                     failedOnceAlready = TRUE;
