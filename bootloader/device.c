@@ -339,31 +339,32 @@ Uint32 DEVICE_init()
 
    // System PSC setup - enable all
   DEVICE_PSCInit();
-  
+
+    /* we will configure all unconnected pins to gpio mode, output, low level:
+       bank0: 2,3,5,9,10,13,15
+       bank1: 26,27,29-31
+       bank2: 32,38-47
+       bank3: 48,49
+       bank4: 79
+       bank5: 83-86,88-90,92 */
+
     DEVICE_pinmuxControl(0,0xFFFFFFFF,0x00000000);  // All Video Inputs
-    DEVICE_pinmuxControl(1,0xFFFFFFFF,0x00145555);  // All Video Outputs
+    DEVICE_pinmuxControl(1,0xFFFFFFFF,0x00430000);  // All as gpio
     DEVICE_pinmuxControl(2,0xFFFFFFFF,0x000000DA);  // EMIFA
-    DEVICE_pinmuxControl(3,0xFFFFFFFF,0x36BD0000);  // SPI0, SPI1, UART1, I2C, SD0, SD1, McBSP0, CLKOUTs
-    DEVICE_pinmuxControl(4,0xFFFFFFFF,0x00156000);  // MMC/SD0 instead of MS, SPI0
+    DEVICE_pinmuxControl(3,0xFFFFFFFF,0x36BD0000);
+    DEVICE_pinmuxControl(4,0xFFFFFFFF,0x00154000);
 
+    GPIO->SETDATA01 = 0x000059C0;
+    GPIO->CLRDATA01 = 0xEC00A62C;
+    GPIO->DIR01 = 0x13FF0093;
 
-    GPIO->DIR01 = 0x13ff0493;
-    GPIO->SETDATA01 = 0x00000100;
-    //GPIO->DIR23 = 0xfef0003c;
+    GPIO->SETDATA23 = 0x00000002; // turn USB 5V on
+    GPIO->CLRDATA23 = 0x0003FFC1;
+    GPIO->DIR23 = 0xFFFC003C;
 
-    GPIO->DIR23 = 0xfefffffe; // last E means GIO33 set as input
-    GPIO->CLRDATA23 = 0x01000000; // FPGA prog B
-    GPIO->SETDATA23 = 0x00000002; //set GPIO33 to 1 but it doesn't effect. Still in 0
-
-    GPIO->DIR45 = 0xe08827fff;
-
-    //GPIO->SETDATA01 = 0x00000940;
-    //GPIO->CLRDATA01 = 0x00000100;
-
-    GPIO->SETDATA45 = 0x08840000;
-    GPIO->CLRDATA45 = 0x00010000;
-
-
+    GPIO->SETDATA45 = 0x08850000;
+    GPIO->CLRDATA45 = 0x17788000;
+    GPIO->DIR45 = 0xE0027FFF;
  
   if (status == E_PASS) status |= DEVICE_PLL1Init();
 

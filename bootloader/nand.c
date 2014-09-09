@@ -228,7 +228,7 @@ Uint32 NAND_badBlockCheck(NAND_InfoHandle hNandInfo, Uint32 block)
   else
   {
     return E_PASS;
-  }  
+  }
 }
 
 
@@ -287,7 +287,6 @@ Uint32 NAND_readPage(NAND_InfoHandle hNandInfo, Uint32 block, Uint32 page, Uint8
 
     if ((*hNandInfo->hEccInfo->fxnCorrect)(hNandInfo,&dest[hNandInfo->dataBytesPerOp*i],readECC) != E_PASS)
     {
-        DEBUG_printString("## 2!\r\n");
       return E_FAIL;
     }
     

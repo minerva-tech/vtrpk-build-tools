@@ -344,6 +344,9 @@ NAND_read_retry:
             // We attempt to read the app data twice.  If we fail twice then we go look for a new
             // application header in the NAND flash at the next block.
             if (readError != E_PASS && !nand_skip_errors) {
+                DEBUG_printString("\tNAND read error \r\n");
+                DEBUG_printHexInt(readError);
+                DEBUG_printString(" !\r\n");
                 if (failedOnceAlready) {
                     blockNum++;
                     goto NAND_find_header;
