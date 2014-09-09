@@ -212,6 +212,7 @@ static Uint32 LOCAL_boot(void)
   //DEBUG_printString("   DONE");
 
   GPIO->SETDATA01 = 0x00000100; // set PROG_B high
+  GPIO->CLRDATA01 = 0x00000800; // set FPGA reset low
   
   UTIL_waitLoop(10000);
 
