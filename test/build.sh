@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PREFIX=${PWD}/../buildroot-min/output
+PREFIX=${PWD}/../buildroot/output
 
 export PATH=$PATH:${PREFIX}/host/usr/bin
 

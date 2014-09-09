@@ -3,7 +3,7 @@ CC = $(CROSS_COMPILE)gcc -O2 -I$(KERNEL_DIR)/include
 STRIP = $(CROSS_COMPILE)strip --strip-unneeded
 #INSTALL_DIR=$(FINAL_DEST)/mc
 
-all:	teplovisor_ccdc_prv_rsz_file tvp514x_ccdc_prv_rsz_file
+all:	teplovisor_ccdc_prv_rsz_file tvp514x_ccdc_prv_rsz_file tvp514x_ccdc_file tvp514x_ccdc_loopback
 
 teplovisor_ccdc_prv_rsz_file: cmem.o teplovisor_ccdc_prv_rsz_file.o
 	$(CC) -o teplovisor_ccdc_prv_rsz_file $^
@@ -13,6 +13,14 @@ tvp514x_ccdc_prv_rsz_file: cmem.o tvp514x_ccdc_prv_rsz_file.o
 	$(CC) -o tvp514x_ccdc_prv_rsz_file $^
 	$(STRIP) tvp514x_ccdc_prv_rsz_file
 
+tvp514x_ccdc_file: cmem.o tvp514x_ccdc_file.o
+	$(CC) -o tvp514_ccdc_file $^
+	$(STRIP) tvp514_ccdc_file
+
+tvp514x_ccdc_loopback: cmem.o tvp514x_ccdc_loopback.o
+	$(CC) -o tvp514x_ccdc_loopback $^
+	$(STRIP) tvp514x_ccdc_loopback
+	
 install:
 	#mkdir -p 				$(INSTALL_DIR)
 	#cp teplovisor_ccdc_prv_rsz_file		$(INSTALL_DIR)

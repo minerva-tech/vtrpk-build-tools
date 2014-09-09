@@ -42,15 +42,22 @@ int entities_count;
 
 #define CODE    V4L2_MBUS_FMT_YUYV8_2X8
 
-#define WIDTH_IN   384
-#define HEIGHT_IN  288
-#define WIDTH_OUT  384
-#define HEIGHT_OUT 144
+//#define WIDTH_IN   384
+//#define HEIGHT_IN  288
+//#define WIDTH_OUT  384
+//#define HEIGHT_OUT 144
+
+#define WIDTH_IN 	320
+#define HEIGHT_IN	256
+#define WIDTH_OUT	320
+#define HEIGHT_OUT	128
+
 
 #define BUFFER_SIZE (WIDTH_OUT * HEIGHT_OUT * 3 / 2)
 
 int width, height;
-int buf_size = ALIGN((360*240*2), 4096);
+int buf_size = ALIGN((320*256*2), 4096);
+
 
 static unsigned long long prev_ts;
 static unsigned long long curr_ts;
