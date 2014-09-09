@@ -210,6 +210,8 @@ static Uint32 LOCAL_boot(void)
 #endif
     
   //DEBUG_printString("   DONE");
+
+  GPIO->SETDATA01 = 0x00000100; // set PROG_B high
   
   UTIL_waitLoop(10000);
 
