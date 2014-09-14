@@ -40,7 +40,7 @@ clean:
 	-rm -f -v *.bin *.asm *.o sft $(SHOEHORN) $(SFH) $(SDH)
 
 ubl_uart.bin: start.S $(UBL_SOURCES) $(UBL_LINKERSCRIPT)
-	$(CC) -DARM270_DDR216_OSC24 $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) -o ubl
+	$(CC) -DARM297_DDR270_OSC24 $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) -o ubl
 	$(OBJDUMP) -dS ubl > ubl_uart.asm
 	$(OBJCOPY) $(OBJCOPYFLAGS) -O binary ubl $@
 	-rm -f ubl

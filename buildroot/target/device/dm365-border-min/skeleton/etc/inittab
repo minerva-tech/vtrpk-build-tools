@@ -18,7 +18,7 @@ null::sysinit:/bin/mount -o remount,rw / # REMOUNT_ROOTFS_RW
 null::sysinit:/bin/mount -t proc proc /proc
 ::sysinit:/bin/mount -t sysfs none /sys
 #::sysinit:/bin/mount -t tmpfs mdev /dev
-::sysinit:/bin/echo /sbin/mdev > /proc/sys/kernel/hotplug
+#::sysinit:/bin/echo /sbin/mdev > /proc/sys/kernel/hotplug
 ::sysinit:/sbin/mdev -s
 #::sysinit:/bin/mkdir -p -m 0755 /dev/pts
 #::sysinit:/bin/mount -t devpts devpts /dev/pts
@@ -29,7 +29,7 @@ null::sysinit:/bin/mkdir -p /dev/shm
 null::sysinit:/bin/mount -a
 null::sysinit:/bin/hostname -F /etc/hostname
 # now run any rc scripts
-::sysinit:/etc/init.d/rcS
+::sysinit:/etc/init.d/S20urandom start
 
 #::sysinit:/bin/mount -t vfat /dev/mmcblk0p1 /mnt/1
 #::sysinit:/bin/mount -t ext2 /dev/mmcblk0p2 /mnt/2
@@ -37,11 +37,12 @@ null::sysinit:/bin/hostname -F /etc/hostname
 #::respawn:/usr/bin/udpsvd -v -E -u root 0 69 /usr/bin/tftpd -c /test
 
 # Put a getty on the serial port
-#ttyS1::respawn:/sbin/getty -n -L ttyS1 115200 vt100 # GENERIC_SERIAL
-ttyS0::respawn:-/bin/sh
+#ttyS0::respawn:/sbin/getty -n -L ttyS0 115200 vt100 # GENERIC_SERIAL
+#ttyS0::respawn:-/bin/sh
 
-#::sysinit:/usr/bin/teplovisor.sh
+#::sysinit:/usr/bin/teplovisor 38400 0 64 1 1500
 
+::sysinit:/usr/bin/late_init.sh
 
 # Stuff to do for the 3-finger salute
 ::ctrlaltdel:/sbin/reboot

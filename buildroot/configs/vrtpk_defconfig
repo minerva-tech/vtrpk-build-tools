@@ -157,14 +157,13 @@ BR2_GCC_ENABLE_TLS=y
 #
 # Gdb Options
 #
-BR2_PACKAGE_GDB=y
+# BR2_PACKAGE_GDB is not set
 # BR2_PACKAGE_GDB_SERVER is not set
 # BR2_PACKAGE_GDB_HOST is not set
 # BR2_GDB_VERSION_6_7_1 is not set
-BR2_GDB_VERSION_6_8=y
+# BR2_GDB_VERSION_6_8 is not set
 # BR2_GDB_VERSION_7_0_1 is not set
 # BR2_GDB_VERSION_7_1 is not set
-BR2_GDB_VERSION="6.8"
 BR2_LARGEFILE=y
 BR2_USE_WCHAR=y
 BR2_INSTALL_LIBSTDCPP=y
@@ -260,7 +259,7 @@ BR2_PACKAGE_BUSYBOX_CONFIG="target/device/dm365-border-min/bb.config"
 #
 # Compressors and decompressors
 #
-BR2_PACKAGE_BZIP2=y
+# BR2_PACKAGE_BZIP2 is not set
 # BR2_PACKAGE_LZOP is not set
 # BR2_PACKAGE_XZ is not set
 
@@ -655,7 +654,7 @@ BR2_PACKAGE_ZLIB=y
 # BR2_PACKAGE_ENCHANT is not set
 # BR2_PACKAGE_ICU is not set
 # BR2_PACKAGE_LIBICONV is not set
-BR2_PACKAGE_NCURSES=y
+# BR2_PACKAGE_NCURSES is not set
 # BR2_PACKAGE_NCURSES_TARGET_PANEL is not set
 # BR2_PACKAGE_NCURSES_TARGET_FORM is not set
 # BR2_PACKAGE_NCURSES_TARGET_MENU is not set
