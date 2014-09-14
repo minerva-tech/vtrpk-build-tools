@@ -40,7 +40,9 @@ null::sysinit:/bin/hostname -F /etc/hostname
 #ttyS0::respawn:/sbin/getty -n -L ttyS0 115200 vt100 # GENERIC_SERIAL
 #ttyS0::respawn:-/bin/sh
 
-#::sysinit:/usr/bin/teplovisor 38400 0 64 1 1500
+::sysinit:/sbin/modprobe davinci_spi
+
+::sysinit:/usr/bin/teplovisor 38400 0 64 1 1500
 
 ::sysinit:/usr/bin/late_init.sh
 

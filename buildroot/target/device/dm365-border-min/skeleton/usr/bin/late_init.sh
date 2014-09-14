@@ -1,8 +1,8 @@
 #!/bin/sh
 
-sleep 1
+sleep 2
 
-/sbin/modprobe mtdblock && /sbin/modprobe davinci_nand && /sbin/modprobe m25p80 && /sbin/modprobe at25 && /sbin/modprobe davinci_spi
+/sbin/modprobe davinci_nand
 
 /sbin/modprobe davinci && /sbin/modprobe g_cdc && /sbin/ifup -a
 
