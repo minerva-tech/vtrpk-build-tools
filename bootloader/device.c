@@ -319,6 +319,7 @@ static const Uint16 DDR_RR = 78;
 Uint32 DEVICE_init()
 {
   Uint32 status = E_PASS;
+  Uint32 i;
  
    // Mask all interrupts
   AINTC->INTCTL = 0x4;
@@ -354,8 +355,8 @@ Uint32 DEVICE_init()
     DEVICE_pinmuxControl(3,0xFFFFFFFF,0x36BD0000);
     DEVICE_pinmuxControl(4,0xFFFFFFFF,0x00154000);
 
-    GPIO->SETDATA01 = 0x000058C0;
-    GPIO->CLRDATA01 = 0xEC00A72C;
+    GPIO->SETDATA01 = 0x000051C0;
+    GPIO->CLRDATA01 = 0xEC00A62C | 0x00000800;
     GPIO->DIR01 = 0x13FF0093;
 
     GPIO->SETDATA23 = 0x00000002;
@@ -388,6 +389,12 @@ Uint32 DEVICE_init()
   //if (status == E_PASS) status |= DEVICE_I2C0Init();
 
   WDT_FLAG_ON();
+  
+  //wait for FPGA DONE pin about 100ms
+  for(i=0;i<120;i++){
+      UTIL_waitLoop(216000);// ~1ms
+      if ( 0 < (GPIO->INDTATA01 & 0x00000010) ) break;
+  }
 
   return status;
 }

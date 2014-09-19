@@ -211,10 +211,18 @@ static Uint32 LOCAL_boot(void)
     
   //DEBUG_printString("   DONE");
 
-  GPIO->SETDATA01 = 0x00000100; // set PROG_B high
-  GPIO->CLRDATA01 = 0x00000800; // set FPGA reset low
+  //GPIO->SETDATA01 = 0x00000100; // set PROG_B high
+  //GPIO->CLRDATA01 = 0x00000800; // set FPGA reset low
   
   UTIL_waitLoop(10000);
+
+  //GPIO->SETDATA45 = 0x08000000; // set led RxD to 1 (off the led)
+  //GPIO->CLRDATA45 = 0x08000000; // set led RxD to 0 (on the led)
+
+  // set led RxD to 1 (off the led)
+  GPIO->SETDATA45 = 0x00850000;
+  GPIO->CLRDATA45 = 0x1f788000;
+
 
   DEVICE_TIMER0Stop();
 
