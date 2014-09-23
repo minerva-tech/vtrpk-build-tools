@@ -80,7 +80,7 @@ volatile NANDBOOT_HeaderObj  gNandBoot;
 Uint32 NANDBOOT_copy()
 {
   NAND_InfoHandle hNandInfo;
-  Uint32 count,blockNum;
+  Uint32 count;
   Uint32 i;
   Uint32 magicNum;
   Uint8 *rxBuf;    // RAM receive buffer
@@ -90,7 +90,6 @@ Uint32 NANDBOOT_copy()
 
   // Maximum application size is 16 MB
   rxBuf = (Uint8*)UTIL_allocMem((APP_IMAGE_SIZE>>1));
-  blockNum = DEVICE_NAND_UBL_SEARCH_START_BLOCK;
 
   //DEBUG_printString("Starting NAND Copy...\r\n");
   
@@ -98,17 +97,11 @@ Uint32 NANDBOOT_copy()
   hNandInfo = NAND_open((Uint32)&EMIFStart, (Uint8) DEVICE_emifBusWidth());
   if (hNandInfo == NULL)
     return E_FAIL;
-    
-NAND_startAgain:
-  if (blockNum > DEVICE_NAND_UBL_SEARCH_END_BLOCK)
-  {
-    return E_FAIL;  // NAND boot failed and return fail to main
-  }
 
   // Read data about Application starting at START_APP_BLOCK_NUM, Page 0
   // and possibly going until block END_APP_BLOCK_NUM, Page 0
-  for(count=blockNum; count <= DEVICE_NAND_UBL_SEARCH_END_BLOCK; count++)
-  {    
+  for(count=DEVICE_NAND_UBL_SEARCH_START_BLOCK; count <= DEVICE_NAND_UBL_SEARCH_END_BLOCK; count++)
+  {
     if(NAND_readPage(hNandInfo,count,0,rxBuf) != E_PASS)
       continue;
 
@@ -117,11 +110,10 @@ NAND_startAgain:
     /* Valid magic number found */
     if((magicNum & 0xFFFFFF00) == MAGIC_NUMBER_VALID)
     {
-      blockNum = count;
       DEBUG_printString("Valid magicnum, ");
       DEBUG_printHexInt(magicNum);
       DEBUG_printString(", found in block ");
-      DEBUG_printHexInt(blockNum);
+      DEBUG_printHexInt(count);
       DEBUG_printString(".\r\n");
       break;
     }
@@ -155,33 +147,32 @@ NAND_startAgain:
     UTIL_setCurrMemPtr((void *)((Uint32)UTIL_getCurrMemPtr() - (APP_IMAGE_SIZE>>1)));
   }
 
-NAND_retry:
   /* initialize block and page number to be used for read */
   block = gNandBoot.block;
   page = gNandBoot.page;
 
-    // Perform the actual copying of the application from NAND to RAM
-  for(i=0;i<gNandBoot.numPage;i++) {
-      // if page goes beyond max number of pages increment block number and reset page number
-    if(page >= hNandInfo->pagesPerBlock) {
-      page = 0;
-      block++;
+    while (NAND_badBlockCheck(hNandInfo, block) != E_PASS) {
+        if (++block >= hNandInfo->numBlocks) return E_FAIL;
     }
-    readError = NAND_readPage(hNandInfo,block,page++,(&rxBuf[i*(hNandInfo->dataBytesPerPage)]));  /* Copy the data */
 
-    // We attempt to read the app data twice.  If we fail twice then we go look for a new
-    // application header in the NAND flash at the next block.
-    if(readError != E_PASS) {
-      if(failedOnceAlready) {
-        blockNum++;
-        goto NAND_startAgain;
-      }
-        else {
-            failedOnceAlready = TRUE;
-        goto NAND_retry;
-      }
+    // Perform the actual copying of the application from NAND to RAM
+    for (i=0;i<gNandBoot.numPage;i++) {
+        // if page goes beyond max number of pages increment block number and reset page number
+        if(page >= hNandInfo->pagesPerBlock) {
+            page = 0;
+            do {
+                if (++block >= hNandInfo->numBlocks) return E_FAIL;
+            } while (NAND_badBlockCheck(hNandInfo, block) != E_PASS);
+        }
+
+        readError = NAND_readPage(hNandInfo,block,page,(&rxBuf[i*(hNandInfo->dataBytesPerPage)]));  /* Copy the data */
+        if (readError != E_PASS) {
+            // We attempt to read the app data twice.
+            readError = NAND_readPage(hNandInfo,block,page,(&rxBuf[i*(hNandInfo->dataBytesPerPage)]));
+            if (readError != E_PASS) return E_FAIL;
+        }
+        page++;
     }
-  }
 
   // Application was read correctly, so set entrypoint
   gEntryPoint = gNandBoot.entryPoint;

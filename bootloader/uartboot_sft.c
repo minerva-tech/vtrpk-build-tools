@@ -330,32 +330,28 @@ NAND_find_header:
 
         if (UART_sendBytes(hNandReadBuf, 4) != E_PASS ) return E_FAIL;
 
-NAND_read_retry:
+        while (NAND_badBlockCheck(hNandInfo, block) != E_PASS) {
+            if (++block >= hNandInfo->numBlocks) return E_FAIL;
+        }
 
         // Perform the actual copying of the application from NAND to RAM
         for (i=0;i<numPage;i++) {
             // if page goes beyond max number of pages increment block number and reset page number
             if (page >= hNandInfo->pagesPerBlock) {
                 page = 0;
-                block++;
+                do {
+                    if (++block >= hNandInfo->numBlocks) return E_FAIL;
+                } while (NAND_badBlockCheck(hNandInfo, block) != E_PASS);
             }
-            readError = NAND_readPage(hNandInfo,block,page++,hNandReadBuf);
+            readError = NAND_readPage(hNandInfo,block,page,hNandReadBuf);
 
-            // We attempt to read the app data twice.  If we fail twice then we go look for a new
-            // application header in the NAND flash at the next block.
-            if (readError != E_PASS && !nand_skip_errors) {
-                DEBUG_printString("\tNAND read error \r\n");
-                DEBUG_printHexInt(readError);
-                DEBUG_printString(" !\r\n");
-                if (failedOnceAlready) {
-                    blockNum++;
-                    goto NAND_find_header;
-                }
-                else {
-                    failedOnceAlready = TRUE;
-                    goto NAND_read_retry;
-                }
+            if (readError != E_PASS) {
+            // We attempt to read the app data twice.
+                readError = NAND_readPage(hNandInfo,block,page,hNandReadBuf);
+                if (readError != E_PASS && !nand_skip_errors) return E_FAIL;
             }
+            page++;
+
             if (UART_sendBytes(hNandReadBuf, hNandInfo->dataBytesPerPage) != E_PASS ) return E_FAIL;
         }
     }
