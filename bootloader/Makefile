@@ -1,9 +1,9 @@
 
 UTIL_DIR = utils
 
-UBL_SOURCES=boot.c selfcopy.c ubl.c uartboot.c device.c debug.c uart.c util.c nand.c nandboot.c device_nand.c
+UBL_SOURCES=boot.c selfcopy.c ubl.c uartboot.c device.c debug.c uart.c util.c nand.c nandboot.c device_nand.c dma.c
 
-SFT_SOURCES=boot.c selfcopy.c sft.c uartboot_sft.c device.c debug.c uart.c util.c nand.c nandboot.c device_nand.c
+SFT_SOURCES=boot.c selfcopy.c sft.c uartboot_sft.c device.c debug.c uart.c util.c nand.c nandboot.c device_nand.c dma.c
 
 ENTRYPOINT=boot
 
@@ -46,7 +46,7 @@ ubl_uart.bin: start.S $(UBL_SOURCES) $(UBL_LINKERSCRIPT)
 	-rm -f ubl
 
 ubl_nand.bin: start.S $(UBL_SOURCES) $(UBL_LINKERSCRIPT)
-	$(CC) -DARM270_DDR216_OSC24 -DUBL_NAND $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) -o ubl
+	$(CC) -DARM270_DDR216_OSC24 -DUBL_NAND -DDMA $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) -o ubl
 	$(OBJDUMP) -dS ubl > ubl_nand.asm
 	$(OBJCOPY) $(OBJCOPYFLAGS) -O binary ubl $@
 	-rm -f ubl

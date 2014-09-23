@@ -30,6 +30,9 @@
 // Device NAND specific stuff
 #include "device_nand.h"
 
+#ifdef DMA
+#include "dma.h"
+#endif
 
 /************************************************************
 * Explicit External Declarations                            *
@@ -1104,6 +1107,10 @@ static void LOCAL_flashReadBytes(NAND_InfoHandle hNandInfo, void* pDest, Uint32 
   
   destAddr.cp = (VUint8*) pDest;
   srcAddr.cp = LOCAL_flashMakeAddr (hNandInfo->flashBase, NAND_DATA_OFFSET );
+
+#ifdef DMA
+    nand_dma_read_buf(srcAddr.cp, destAddr.cp, numBytes);
+#else
   switch (hNandInfo->busWidth)
   {
     case BUS_8BIT:
@@ -1115,6 +1122,7 @@ static void LOCAL_flashReadBytes(NAND_InfoHandle hNandInfo, void* pDest, Uint32 
           *destAddr.wp++ = *srcAddr.wp;
         break;
     }
+#endif
 }
 
 // Poll bit of NANDFSR to indicate ready

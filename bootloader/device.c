@@ -18,6 +18,10 @@
 // Utility functions
 #include "util.h"
 
+#ifdef DMA
+#include "dma.h"
+#endif
+
 //#define ARM270_DDR216_OSC24
 /************************************************************
 * Explicit External Declarations                            *
@@ -389,6 +393,8 @@ Uint32 DEVICE_init()
   //if (status == E_PASS) status |= DEVICE_I2C0Init();
 
   WDT_FLAG_ON();
+
+  dma_init();
   
   //wait for FPGA DONE pin about 100ms
   for(i=0;i<120;i++){
