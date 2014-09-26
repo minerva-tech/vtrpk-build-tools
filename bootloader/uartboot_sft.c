@@ -348,7 +348,10 @@ NAND_find_header:
             if (readError != E_PASS) {
             // We attempt to read the app data twice.
                 readError = NAND_readPage(hNandInfo,block,page,hNandReadBuf);
-                if (readError != E_PASS && !nand_skip_errors) return E_FAIL;
+                if (readError != E_PASS && !nand_skip_errors) {
+                    blockNum = block + 1;
+                    goto NAND_find_header;
+                }
             }
             page++;
 
