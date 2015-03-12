@@ -117,17 +117,18 @@ void main(void)
 
 static Uint32 LOCAL_boot(void)
 {
+#ifndef UBL_NAND
   DEVICE_BootMode bootMode;
 
   // Read boot mode 
   bootMode = DEVICE_bootMode();
-  
+
   if (bootMode == DEVICE_BOOTMODE_UART)
   {
     // Wait until the RBL is done using the UART.
     while((UART0->LSR & 0x40) == 0 );
   }
-
+#endif
   // Platform Initialization
   if ( DEVICE_init() != E_PASS )
   {

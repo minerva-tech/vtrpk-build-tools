@@ -46,7 +46,7 @@ ubl_uart.bin: start.S $(UBL_SOURCES) $(UBL_LINKERSCRIPT)
 	-rm -f ubl
 
 ubl_nand.bin: start.S $(UBL_SOURCES) $(UBL_LINKERSCRIPT)
-	$(CC) -DARM270_DDR216_OSC24 -DUBL_NAND -DDMA $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) -o ubl
+	$(CC) -DARM270_DDR216_OSC24 -DUBL_NAND -DDMA -DSILENT $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) -o ubl
 	$(OBJDUMP) -dS ubl > ubl_nand.asm
 	$(OBJCOPY) $(OBJCOPYFLAGS) -O binary ubl $@
 	-rm -f ubl

@@ -51,6 +51,7 @@
 ************************************************************/
 
 // Debug print function (could use stdio or maybe UART)
+#ifndef SILENT
 Uint32 DEBUG_printString(String s)
 {
   return UART_sendString(s, FALSE);
@@ -62,6 +63,17 @@ Uint32 DEBUG_printHexInt(Uint32 i)
   return UART_sendHexInt(i);
 }
 
+#else
+Uint32 DEBUG_printString(String s)
+{
+  return E_PASS;
+}
+
+Uint32 DEBUG_printHexInt(Uint32 i)
+{
+  return E_PASS;
+}
+#endif
 Uint32 DEBUG_readString(String s)
 {
   return UART_recvString(s);
