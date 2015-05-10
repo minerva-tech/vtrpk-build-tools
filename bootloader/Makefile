@@ -40,7 +40,7 @@ all: ubl_nand.bin ubl_uart.bin sft.bin $(SHOEHORN) $(SFH) $(SDH) $(UART_TEST)
 
 .PHONY : clean
 clean:
-	-rm -f -v *.bin *.asm *.o sft $(SHOEHORN) $(SFH) $(SDH) 
+	-rm -f -v *.bin *.asm *.o sft $(SHOEHORN) $(SFH) $(SDH) $(UART_TEST)
 
 ubl_uart.bin: start.S $(UBL_SOURCES) $(UBL_LINKERSCRIPT)
 	$(CC) -DARM270_DDR216_OSC24 $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) -o ubl
