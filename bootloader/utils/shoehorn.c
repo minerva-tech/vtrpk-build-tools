@@ -77,17 +77,27 @@ static char *image = NULL;
 static int image_size;
 static int fd = -1;
 
+static int skip = 0;
+static int attempts = 10;
+
 static void
 shoehorn_exit (void)
 {
     if (fd >= 0) close(fd);
+    exit(EXIT_FAILURE);
 }
 
 static void
 alarm_handler (int sig)
 {
-    fprintf(stderr,"Timeout\n");
-    shoehorn_exit();
+//    fprintf(stderr,"Timeout\n");
+//    shoehorn_exit();
+    fprintf(stderr,"\nTimeout\n" );
+    if (attempts) {
+	attempts--;
+	skip = 1;
+	}
+    else shoehorn_exit();
 }
 
 static int
@@ -97,9 +107,10 @@ wait_string (const char *str, int echo)
     int i = 0;
     size_t n = strlen(str) + 1;
 
+    skip = 0;
     alarm(15);
 
-    for (;;) {
+    while (!skip) {
         switch (read(fd,&c,1)) {
         case 0: break;
         case 1:
@@ -275,21 +286,24 @@ int main(int argc, char **argv)
     actions.sa_handler = alarm_handler;
     sigaction(SIGALRM,&actions,NULL);
 
-    printf("Waiting for 'BOOTME'\n");
-    if (wait_string("BOOTME",0)) exit(EXIT_FAILURE);
 
     /* Calculate CRC32 checksum */
 	crc32 = 0xffffffff;
 	for (i = 0; i < image_size; i++)
 		crc32 = crc32_table[(crc32 ^ ldr[i]) & 0xff] ^ (crc32 >> 8);
 
-    printf("Send header\n");
-    put_string("    ACK",8);
-    snprintf(out_str, 21, "%08x%04x01000000", crc32, image_size);
-    put_string(out_str,20);
-
-    printf("Waiting for 'BEGIN'\n");
-    if (wait_string("BEGIN",0)) exit(EXIT_FAILURE);
+    for (;;) {
+       printf("Waiting for 'BOOTME'\n");
+        if (wait_string("BOOTME",0)) exit(EXIT_FAILURE);
+        
+        printf("Send header\n");
+        put_string("    ACK",8);
+        snprintf(out_str, 21, "%08x%04x01000000", crc32, image_size);
+        put_string(out_str,20);
+    
+        printf("Waiting for 'BEGIN'\n");
+        if (!wait_string("BEGIN",0)) break;
+    }
 
     printf("Send CRC32\n");
     for (i = 0; i < 256;) {
