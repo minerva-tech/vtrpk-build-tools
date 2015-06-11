@@ -51,7 +51,7 @@ if [ ! -f $1 ]; then
     exit 2
 fi
 
-size=`ls -l /tmp/zImage | awk '{print $5}'`
+size=`ls -l $1 | awk '{print $5}'`
 
 log "Erasing ${DEVICE} ..."
 
