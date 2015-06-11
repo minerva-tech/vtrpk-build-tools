@@ -34,6 +34,8 @@ null::sysinit:/usr/bin/late_init.sh &
 # Put a getty on the serial port
 #ttyS0::respawn:/sbin/getty -n -L ttyS0 115200 vt100 # GENERIC_SERIAL
 
+null::respawn:/usr/bin/mongoose
+
 # Stuff to do for the 3-finger salute
 ::ctrlaltdel:/sbin/reboot
 
