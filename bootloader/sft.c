@@ -80,6 +80,8 @@ void main(void)
 * Local Function Definitions                                *
 ************************************************************/
 
+extern int usb_detect(void);
+
 static Uint32 LOCAL_boot(void)
 {
   DEVICE_BootMode bootMode;

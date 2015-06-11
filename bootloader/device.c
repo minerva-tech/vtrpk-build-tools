@@ -394,7 +394,9 @@ Uint32 DEVICE_init()
 
   WDT_FLAG_ON();
 
+#ifdef DMA
   dma_init();
+#endif
   
   //wait for FPGA DONE pin about 100ms
   for(i=0;i<120;i++){
@@ -888,12 +890,13 @@ Uint32 DEVICE_TIMER0Init()
   TIMER0->TIM12 = 0x00000000;
   TIMER0->TIM34 = 0x00000000;
   
-  // Set timer period (5 second timeout = (24000000 * 5) cycles = 0x07270E00) 
+  // Set timer period (1 msec timeout = 24000 cycles = 0x00005DC0)
   TIMER0->PRD34 = 0x00000000;
-  TIMER0->PRD12 = 0x07270E00;
+  TIMER0->PRD12 = 0x00005DC0;
 
   return E_PASS;
 }
+
 //interrupt for Timer0 in DM35x and DM36x is the same
 void DEVICE_TIMER0Start(void)
 {

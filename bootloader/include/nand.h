@@ -13,6 +13,7 @@
 
 // Prevent C++ name mangling
 #ifdef __cplusplus
+class pagesPerBlock;
 extern far "c" {
 #endif
 

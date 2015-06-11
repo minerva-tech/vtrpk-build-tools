@@ -1,0 +1,8 @@
+config BR2_PACKAGE_MONGOOSE
+	bool "mongoose"
+	help
+	  Mongoose is easy to use web server.
+	  It also can be used as embedded web server library
+	  to provide a web interface to applications. 
+
+	  http://code.google.com/p/mongoose/

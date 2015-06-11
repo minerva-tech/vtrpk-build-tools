@@ -4,6 +4,7 @@
   AUTHOR      : Daniel Allred
   DESC        : The main project file for the user boot loader
  ----------------------------------------------------------------------------- */
+#include <string.h>
 
 // General type include
 #include "tistdtypes.h"
@@ -44,6 +45,8 @@
 * Explicit External Declarations                            *
 ************************************************************/
 
+extern int usb_detect (void);
+extern Uint32 NANDBOOT_copy (Uint32 mode);
 
 /************************************************************
 * Local Macro Declarations                                  *
@@ -68,13 +71,11 @@ static void (*APPEntry)(unsigned, unsigned, unsigned);
 * Local Variable Definitions                                *
 ************************************************************/
 
-
 /************************************************************
 * Global Variable Definitions                               *
 ************************************************************/
 
 Uint32 gEntryPoint;
-
 
 /************************************************************
 * Global Function Definitions                               *
@@ -84,7 +85,7 @@ Uint32 gEntryPoint;
 #define ADDR_ATAGS 0x80000100
 
 // Main entry point
-void main(void)
+void main (void)
 {
     unsigned *tag = (void*) ADDR_ATAGS;
 
@@ -117,6 +118,9 @@ void main(void)
 
 static Uint32 LOCAL_boot(void)
 {
+
+Uint32 rescue;
+
 #ifndef UBL_NAND
   DEVICE_BootMode bootMode;
 
@@ -150,6 +154,11 @@ static Uint32 LOCAL_boot(void)
   // Send some information to host
   DEBUG_printString("\r\nUBL Version: ");
   DEBUG_printString(UBL_VERSION_STRING);
+
+  rescue = (usb_detect() > 1) ? 1 : 0;
+  if (rescue)
+      DEBUG_printString("Usb cable is attached, loading rescue image ...\r\n");
+
   DEBUG_printString("\r\nBootMode = ");
   
   // Select Boot Mode
@@ -159,7 +168,7 @@ static Uint32 LOCAL_boot(void)
     DEBUG_printString("NAND\r\n");
 
     // Copy binary image application from NAND to RAM
-    if (NANDBOOT_copy() != E_PASS)
+    if (NANDBOOT_copy(rescue) != E_PASS)
     {
       DEBUG_printString("NAND Boot failed.\r\n");
       LOCAL_bootAbort();

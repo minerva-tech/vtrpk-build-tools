@@ -34,8 +34,10 @@ extern far "c" {
 #define DEVICE_NAND_RBL_SEARCH_END_BLOCK       (24)
 
 // Defines which NAND blocks are valid for writing the APP data
-#define DEVICE_NAND_UBL_SEARCH_START_BLOCK     (25)
-#define DEVICE_NAND_UBL_SEARCH_END_BLOCK       (DEVICE_NAND_UBL_SEARCH_START_BLOCK + 64)
+#define DEVICE_NAND_RESCUE_SEARCH_START_BLOCK     (DEVICE_NAND_RBL_SEARCH_END_BLOCK)
+#define DEVICE_NAND_RESCUE_SEARCH_END_BLOCK       (DEVICE_NAND_RESCUE_SEARCH_START_BLOCK + 32*8)
+#define DEVICE_NAND_KERNEL_SEARCH_START_BLOCK     (DEVICE_NAND_RESCUE_SEARCH_END_BLOCK)
+#define DEVICE_NAND_KERNEL_SEARCH_END_BLOCK       (DEVICE_NAND_KERNEL_SEARCH_START_BLOCK + 32*8)
 
 /******************************************************
 * Global Typedef declarations                         *

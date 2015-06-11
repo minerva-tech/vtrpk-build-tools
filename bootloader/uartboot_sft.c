@@ -261,15 +261,15 @@ UART_tryAgain:
         // Allocate mem for read buffer (only once)
         hNandReadBuf = UTIL_allocMem(hNandInfo->dataBytesPerPage);
 
-        blockNum = DEVICE_NAND_UBL_SEARCH_START_BLOCK;
+        blockNum = DEVICE_NAND_RESCUE_SEARCH_START_BLOCK;
 
 NAND_find_header:
-        if (blockNum > DEVICE_NAND_UBL_SEARCH_END_BLOCK)
+        if (blockNum > DEVICE_NAND_RESCUE_SEARCH_END_BLOCK)
             return E_FAIL;  // NAND boot failed and return fail to main
 
         // Read data about Application starting at START_APP_BLOCK_NUM, Page 0
         // and possibly going until block END_APP_BLOCK_NUM, Page 0
-        for (count=blockNum; count <= DEVICE_NAND_UBL_SEARCH_END_BLOCK; count++) {
+        for (count=blockNum; count <= DEVICE_NAND_RESCUE_SEARCH_END_BLOCK; count++) {
 
             if(NAND_readPage(hNandInfo,count,0,hNandReadBuf) != E_PASS) continue;
 
@@ -288,7 +288,7 @@ NAND_find_header:
         }
 
         // Never found valid header in any page 0 of any of searched blocks
-        if (count > DEVICE_NAND_UBL_SEARCH_END_BLOCK) {
+        if (count > DEVICE_NAND_RESCUE_SEARCH_END_BLOCK) {
             DEBUG_printString("\tNo valid boot image found!\r\n");
             return E_FAIL;
         }
@@ -426,8 +426,8 @@ NAND_find_header:
       nandBoot.page             = 1;                              // The page is always page 0 for the header, so we use page 1 for data
       nandBoot.ldAddress        = ackHeader.loadAddr;        // The load address is only important if this is a binary image
       nandBoot.forceContigImage = FALSE;
-      nandBoot.startBlock       = DEVICE_NAND_UBL_SEARCH_START_BLOCK;
-      nandBoot.endBlock         = DEVICE_NAND_UBL_SEARCH_END_BLOCK;
+      nandBoot.startBlock       = DEVICE_NAND_RESCUE_SEARCH_START_BLOCK;
+      nandBoot.endBlock         = DEVICE_NAND_RESCUE_SEARCH_END_BLOCK;
       
       // Calculate the number of NAND pages needed to store the APP image
       nandBoot.numPage = 0;
@@ -463,10 +463,10 @@ NAND_find_header:
       }   
 
       // Unprotect the NAND Flash
-      NAND_unProtectBlocks(hNandInfo, DEVICE_NAND_RBL_SEARCH_START_BLOCK, DEVICE_NAND_UBL_SEARCH_END_BLOCK-1);
+      NAND_unProtectBlocks(hNandInfo, DEVICE_NAND_RBL_SEARCH_START_BLOCK, DEVICE_NAND_RESCUE_SEARCH_END_BLOCK-1);
 
       // Erase all the pages of the device
-      if (NAND_eraseBlocks(hNandInfo, DEVICE_NAND_RBL_SEARCH_START_BLOCK, DEVICE_NAND_UBL_SEARCH_END_BLOCK-1) != E_PASS)
+      if (NAND_eraseBlocks(hNandInfo, DEVICE_NAND_RBL_SEARCH_START_BLOCK, DEVICE_NAND_RESCUE_SEARCH_END_BLOCK-1) != E_PASS)
       {
         DEBUG_printString("\tErase failed.\r\n");
         goto UART_tryAgain;
@@ -627,7 +627,7 @@ static Uint32 LOCAL_NANDWriteHeaderAndData(NAND_InfoHandle hNandInfo, NANDBOOT_H
   Uint32    numBlks, numBlksRemaining;
   
   // Unprotect all needed blocks of the flash 
-  if (NAND_unProtectBlocks(hNandInfo,hNandBoot->startBlock,hNandBoot->endBlock-hNandBoot->startBlock+1) != E_PASS)
+  if (NAND_unProtectBlocks(hNandInfo,hNandBoot->startBlock,hNandBoot->endBlock - hNandBoot->startBlock) != E_PASS)
   {
     DEBUG_printString("\tUnprotect failed\r\n");
     return E_FAIL;
@@ -661,7 +661,7 @@ static Uint32 LOCAL_NANDWriteHeaderAndData(NAND_InfoHandle hNandInfo, NANDBOOT_H
     DEBUG_printString(" is bad!!!\r\n");
     currBlockNum++;
     // Now check to make sure we aren't already out of space
-    if (currBlockNum > (hNandBoot->endBlock + numBlks - 1 ))
+    if (currBlockNum >= hNandBoot->endBlock)
     {
       DEBUG_printString("\tNo good blocks in allowed range!!!\r\n");
       return E_FAIL;
@@ -792,16 +792,16 @@ static Uint32 LOCAL_NANDWriteHeaderAndData(NAND_InfoHandle hNandInfo, NANDBOOT_H
       currPageNum++;
 
       // If we need to go the next block, or our image is complete, increment current block num
-      if ( (currPageNum == hNandInfo->pagesPerBlock) || (pageCnt >= (hNandBoot->numPage+1)) )
+      if ( (currPageNum == hNandInfo->pagesPerBlock) || (pageCnt > hNandBoot->numPage) )
       {
         currBlockNum++;
         numBlksRemaining--;
         currPageNum = 0;
       }
     }
-    while ( (pageCnt < (hNandBoot->numPage+1)) && ((currBlockNum + numBlksRemaining - 1)<=hNandBoot->endBlock) );
-  } 
-  while( (currBlockNum + numBlks - 1)<=hNandBoot->endBlock );
+    while ( (pageCnt < (hNandBoot->numPage+1)) && ((currBlockNum + numBlksRemaining) <= hNandBoot->endBlock) );
+  }
+  while ( currBlockNum + numBlks <= hNandBoot->endBlock );
 
   // Protect all blocks
   NAND_protectBlocks(hNandInfo);

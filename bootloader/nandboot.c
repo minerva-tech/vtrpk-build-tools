@@ -43,7 +43,6 @@ extern __FAR__ Uint32 EMIFStart;
 // Entrypoint for application we are decoding out of flash
 extern Uint32 gEntryPoint;
 
-
 /************************************************************
 * Local Macro Declarations                                  *
 ************************************************************/
@@ -71,13 +70,12 @@ extern Uint32 gEntryPoint;
 // structure for holding details about UBL stored in NAND
 volatile NANDBOOT_HeaderObj  gNandBoot;
 
-
 /************************************************************
 * Global Function Definitions                               *
 ************************************************************/
 
 // Function to find out where the application is and copy to RAM
-Uint32 NANDBOOT_copy()
+Uint32 NANDBOOT_copy (Uint32 mode)
 {
   NAND_InfoHandle hNandInfo;
   Uint32 count;
@@ -86,7 +84,6 @@ Uint32 NANDBOOT_copy()
   Uint8 *rxBuf;    // RAM receive buffer
   Uint32 block,page;
   Uint32 readError = E_FAIL;
-  Bool failedOnceAlready = FALSE;
 
   // Maximum application size is 16 MB
   rxBuf = (Uint8*)UTIL_allocMem((APP_IMAGE_SIZE>>1));
@@ -98,9 +95,40 @@ Uint32 NANDBOOT_copy()
   if (hNandInfo == NULL)
     return E_FAIL;
 
-  // Read data about Application starting at START_APP_BLOCK_NUM, Page 0
-  // and possibly going until block END_APP_BLOCK_NUM, Page 0
-  for(count=DEVICE_NAND_UBL_SEARCH_START_BLOCK; count <= DEVICE_NAND_UBL_SEARCH_END_BLOCK; count++)
+    DEBUG_printString("NAND: bytes per page ");
+    DEBUG_printHexInt(hNandInfo->dataBytesPerPage);
+    DEBUG_printString(", pages per block ");
+    DEBUG_printHexInt(hNandInfo->pagesPerBlock);
+    DEBUG_printString("\r\n");
+
+    if (mode) goto load_rescue_image;
+
+  for(count=DEVICE_NAND_KERNEL_SEARCH_START_BLOCK; count < DEVICE_NAND_KERNEL_SEARCH_END_BLOCK; count++)
+  {
+    if(NAND_readPage(hNandInfo,count,0,rxBuf) != E_PASS)
+      continue;
+
+    magicNum = ((Uint32 *)rxBuf)[0];
+
+    /* Valid magic number found */
+    if((magicNum & 0xFFFFFF00) == MAGIC_NUMBER_VALID)
+    {
+      DEBUG_printString("Valid magicnum, ");
+      DEBUG_printHexInt(magicNum);
+      DEBUG_printString(", found in block ");
+      DEBUG_printHexInt(count);
+      DEBUG_printString(".\r\n");
+      goto image_found;
+    }
+  }
+
+    // Never found valid header in any page 0 of any of searched blocks
+    if (count >= DEVICE_NAND_KERNEL_SEARCH_END_BLOCK)
+        DEBUG_printString("No valid boot image found!\r\n");
+
+load_rescue_image:
+
+  for(count=DEVICE_NAND_RESCUE_SEARCH_START_BLOCK; count < DEVICE_NAND_RESCUE_SEARCH_END_BLOCK; count++)
   {
     if(NAND_readPage(hNandInfo,count,0,rxBuf) != E_PASS)
       continue;
@@ -120,11 +148,13 @@ Uint32 NANDBOOT_copy()
   }
 
   // Never found valid header in any page 0 of any of searched blocks
-  if (count > DEVICE_NAND_UBL_SEARCH_END_BLOCK)
+  if (count >= DEVICE_NAND_RESCUE_SEARCH_END_BLOCK)
   {
-    DEBUG_printString("No valid boot image found!\r\n");
+    DEBUG_printString("No valid rescue boot image found!\r\n");
     return E_FAIL;
   }
+
+image_found:
 
   // Fill in NandBoot header
   gNandBoot.entryPoint = *(((Uint32 *)(&rxBuf[4])));/* The first "long" is entry point for Application */

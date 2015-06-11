@@ -58,20 +58,23 @@ static Uint32 LOCAL_getStringLen(String seq);
 // Send specified number of bytes
 Uint32 UART_sendBytes(String seq, Int32 numBytes)
 {
-    Uint32 status = 0;
     Int32 i;
-    Uint32 timerStatus = 1;
+    Uint32 msec = 1000;
 
     for (i=0;i<numBytes;i++) {
-        // Enable Timer one time
+
         DEVICE_TIMER0Start();
+
         do {
-            status = (UART0->LSR)&(0x20);
-            timerStatus = DEVICE_TIMER0Status();
-        } while (!status && timerStatus);
+            if ((UART0->LSR) & 0x20) goto ready;
+            if (!DEVICE_TIMER0Status()) {
+                DEVICE_TIMER0Start();
+                msec--;
+            }
+        } while (msec);
 
-        if(timerStatus == 0) return E_TIMEOUT;
-
+        return E_TIMEOUT;
+ready:
         // Send byte
         (UART0->THR) = seq[i];
     }
@@ -81,30 +84,31 @@ Uint32 UART_sendBytes(String seq, Int32 numBytes)
 // Send specified number of bytes 
 Uint32 UART_sendString(String seq, Bool includeNull)
 {
-  Uint32 status = 0;
-  Int32 i,numBytes;
-  Uint32 timerStatus = 1;
+    Uint32 status = 0;
+    Int32 i,numBytes;
+    Uint32 msec = 1000;
 	
-  numBytes = includeNull?(LOCAL_getStringLen(seq)+1):(LOCAL_getStringLen(seq));
+    numBytes = includeNull?(LOCAL_getStringLen(seq)+1):(LOCAL_getStringLen(seq));
 	
-  for(i=0;i<numBytes;i++)
-  {
-    // Enable Timer one time
-    DEVICE_TIMER0Start();
-    do
-    {
-      status = (UART0->LSR)&(0x20);
-      timerStatus = DEVICE_TIMER0Status();
-    }
-    while (!status && timerStatus);
+    for(i=0;i<numBytes;i++) {
 
-    if(timerStatus == 0)
-      return E_TIMEOUT;
+        DEVICE_TIMER0Start();
+
+        do {
+            if ((UART0->LSR) & 0x20) goto ready;
+            if (!DEVICE_TIMER0Status()) {
+                DEVICE_TIMER0Start();
+                msec--;
+            }
+        } while (msec);
+
+        return E_TIMEOUT;
+ready:
 		
-    // Send byte 
-    (UART0->THR) = seq[i];
-  }
-  return E_PASS;
+        // Send byte
+        (UART0->THR) = seq[i];
+    }
+    return E_PASS;
 }
 
 Uint32 UART_sendHexInt(Uint32 value)
@@ -135,72 +139,72 @@ Uint32 UART_recvString(String seq)
 // Receive data from UART 
 Uint32 UART_recvStringN(String seq, Uint32* len, Bool stopAtNull)
 {
-  Uint32 i, status = 0;
-  Uint32 timerStatus = 1;
+  Uint32 i;
+  Uint32 msec = 1000;
   	
-  for(i=0;i<(*len);i++)
-  {
-    // Enable timer one time
-    DEVICE_TIMER0Start();
-    do
-    {
-      status = (UART0->LSR)&(0x01);
-      timerStatus = DEVICE_TIMER0Status();
+    for(i=0;i<(*len);i++) {
+
+        DEVICE_TIMER0Start();
+
+        do {
+            if ((UART0->LSR) & 0x01) goto ready;
+            if (!DEVICE_TIMER0Status()) {
+                DEVICE_TIMER0Start();
+                msec--;
+            }
+        } while (msec);
+
+        return E_TIMEOUT;
+ready:
+
+        // Receive byte
+        seq[i] = (UART0->RBR) & 0xFF;
+
+        // Check status for errors
+        if( ( (UART0->LSR)&(0x1C) ) != 0 )
+            return E_FAIL;
+
+        if (stopAtNull && (seq[i] == 0x00)) {
+            *len = i;
+            break;
+        }
     }
-    while (!status && timerStatus);
-
-    if(timerStatus == 0)
-      return E_TIMEOUT;
-
-    // Receive byte 
-    seq[i] = (UART0->RBR) & 0xFF;
-
-    // Check status for errors
-    if( ( (UART0->LSR)&(0x1C) ) != 0 )
-      return E_FAIL;
-
-    if (stopAtNull && (seq[i] == 0x00))
-    {
-      *len = i;
-      break;
-    }
-  }
-  return E_PASS;
+    return E_PASS;
 }
 
 // More complex send / receive functions
 Uint32 UART_checkSequence(String seq, Bool includeNull)
 {
   Uint32 i, numBytes;
-  Uint32 status = 0,timerStatus = 1;
+  Uint32 msec = 1000;
 
   numBytes = includeNull?(LOCAL_getStringLen(seq)+1):(LOCAL_getStringLen(seq));
 
-  for(i=0;i<numBytes;i++)
-  {
-    // Enable Timer one time
-    DEVICE_TIMER0Start();
-    do
-    {
-      status = (UART0->LSR)&(0x01);
-      timerStatus = DEVICE_TIMER0Status();
+    for(i=0;i<numBytes;i++) {
+
+        DEVICE_TIMER0Start();
+
+        do {
+            if ((UART0->LSR) & 0x01) goto ready;
+            if (!DEVICE_TIMER0Status()) {
+                DEVICE_TIMER0Start();
+                msec--;
+            }
+        } while (msec);
+
+        return E_TIMEOUT;
+ready:
+
+        if (((UART0->RBR)&0xFF) != seq[i]) return E_FAIL;
     }
-    while (!status && timerStatus);
-
-    if(timerStatus == 0)
-      return E_TIMEOUT;
-
-    if( ( (UART0->RBR)&0xFF) != seq[i] )
-      return E_FAIL;
-  }
-  return E_PASS;
+    return E_PASS;
 }
 
 Uint32 UART_recvHexData(Uint32 numBytes, Uint32* data)
 {
   Uint32 i,j;
   Uint32 temp[8];
-  Uint32 timerStatus = 1, status = 0;
+  Uint32 msec = 1000;
   Uint32 numLongs, numAsciiChar, shift;
     
   if(numBytes == 2)
@@ -216,37 +220,38 @@ Uint32 UART_recvHexData(Uint32 numBytes, Uint32* data)
     shift = 28;
   }
 
-  for(i=0;i<numLongs;i++)
-  {
-    data[i] = 0;
-    for(j=0;j<numAsciiChar;j++)
-    {
-      /* Enable Timer one time */
-      DEVICE_TIMER0Start();
-      do
-      {
-        status = (UART0->LSR)&(0x01);
-        timerStatus = DEVICE_TIMER0Status();
-      }
-      while (!status && timerStatus);
+    for(i=0;i<numLongs;i++) {
 
-      if(timerStatus == 0)
-        return E_TIMEOUT;
+        data[i] = 0;
 
-      // Converting ascii to Hex
-      temp[j] = ((UART0->RBR)&0xFF)-48;
-      if(temp[j] > 22)    // To support lower case a,b,c,d,e,f
-        temp[j] = temp[j] - 39;
-      else if(temp[j]>9)  // To support upper case A,B,C,D,E,F
-        temp[j] = temp[j] - 7;
+        for(j=0;j<numAsciiChar;j++) {
 
-      // Checking for bit 1,2,3,4 for reception Error
-      if( ( (UART0->LSR)&(0x1C) ) != 0)
-        return E_FAIL;
+            DEVICE_TIMER0Start();
 
-      data[i] |= (temp[j]<<(shift-(j*4)));
+            do {
+                if ((UART0->LSR) & 0x01) goto ready;
+                if (!DEVICE_TIMER0Status()) {
+                    DEVICE_TIMER0Start();
+                    msec--;
+                }
+            } while (msec);
+
+            return E_TIMEOUT;
+ready:
+
+            // Converting ascii to Hex
+            temp[j] = ((UART0->RBR)&0xFF)-48;
+            if (temp[j] > 22)    // To support lower case a,b,c,d,e,f
+                temp[j] = temp[j] - 39;
+            else if (temp[j]>9)  // To support upper case A,B,C,D,E,F
+                temp[j] = temp[j] - 7;
+
+            // Checking for bit 1,2,3,4 for reception Error
+            if (((UART0->LSR) & 0x1C) != 0) return E_FAIL;
+
+            data[i] |= (temp[j]<<(shift-(j*4)));
+        }
     }
-  }
   return E_PASS;
 }
 

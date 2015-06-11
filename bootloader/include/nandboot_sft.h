@@ -44,8 +44,6 @@ NANDBOOT_HeaderObj,*NANDBOOT_HeaderHandle;
 * Global Function Declarations                        *
 ******************************************************/
 
-extern Uint32 NANDBOOT_copy(void);
-
 
 /***********************************************************
 * End file                                                 *

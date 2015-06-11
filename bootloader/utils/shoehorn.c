@@ -142,13 +142,16 @@ static int
 read_image (void)
 {
     struct stat st;
+    size_t size;
 
     if (stat(image, &st)) {
 		perror("Failed to get image size");
 		return -1;
 	}
 
-	image_size = st.st_size;
+	size = st.st_size;
+    image_size = (size + 7) >> 3;
+    image_size <<= 3;
 
     ldr = malloc(image_size);
     if (ldr == NULL) {
@@ -161,7 +164,7 @@ read_image (void)
 		return -1;
 	}
 
-	if (read(fd, ldr, image_size) != image_size) {
+	if (read(fd, ldr, size) != size) {
 		perror("Failed to read image");
 		return -1;
 	}
