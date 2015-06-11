@@ -154,6 +154,7 @@ Uint32 rescue;
   // Send some information to host
   DEBUG_printString("\r\nUBL Version: ");
   DEBUG_printString(UBL_VERSION_STRING);
+  DEBUG_printString("\r\n");
 
   rescue = (usb_detect() > 1) ? 1 : 0;
   if (rescue)
