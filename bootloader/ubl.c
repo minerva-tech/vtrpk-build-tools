@@ -158,7 +158,7 @@ Uint32 rescue;
 
   rescue = (usb_detect() > 1) ? 1 : 0;
   if (rescue)
-      DEBUG_printString("Usb cable is attached, loading rescue image ...\r\n");
+      DEBUG_printString("USB cable is attached, loading rescue image ...\r\n");
 
   DEBUG_printString("\r\nBootMode = ");
   

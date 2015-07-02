@@ -419,6 +419,11 @@ void POR_RESET()
     }
 }
 
+Uint32 GET_RSTYPE(void)
+{
+    return (PLL1->RSTYPE);
+}
+
 void WDT_RESET()
 {
     volatile unsigned int s;

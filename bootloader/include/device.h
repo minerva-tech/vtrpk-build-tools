@@ -630,6 +630,7 @@ void VPSS_SYNC_RESET();
 void POR_RESET();
 void WDT_RESET();
 void WDT_FLAG_ON();
+Uint32 GET_RSTYPE(void);
 
 // Device boot status functions
 DEVICE_BootMode   DEVICE_bootMode( void );

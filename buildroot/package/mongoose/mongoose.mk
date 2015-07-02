@@ -36,9 +36,10 @@ endef
 
 define MONGOOSE_UNINSTALL_TARGET_CMDS
 	rm -f $(TARGET_DIR)/usr/bin/mongoose
-	rm -f $(TARGET_DIR)/usr/bin/rescue_httpd
-	rm -f $(TARGET_DIR)/usr/bin/rescue_httpd.*sh
-	rm -f $(TARGET_DIR)/etc/ssl_cert.pem
+	rm -f $(TARGET_DIR)/usr/bin/httpd
+	rm -f $(TARGET_DIR)/usr/bin/fwupdate.sh
+	rm -f $(TARGET_DIR)/usr/bin/fpga-update.sh
+	#rm -f $(TARGET_DIR)/etc/ssl_cert.pem
 	rm -rf $(TARGET_DIR)/var/www
 endef
 

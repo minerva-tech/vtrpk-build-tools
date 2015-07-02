@@ -39,7 +39,8 @@ enum {
 };
 
 enum {
-    RESCUE_REQUEST_UPDATE,
+    RESCUE_REQUEST_UPDATE_FW,
+    RESCUE_REQUEST_UPDATE_FPGA,
     RESCUE_REQUEST_ABORT,
     RESCUE_REQUEST_BACK,
     RESCUE_REQUEST_LOG,
@@ -53,9 +54,12 @@ static pthread_t thread;
 static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t mg_mutex = PTHREAD_MUTEX_INITIALIZER;
 
+static const char *update_cmd;
+
 static char exec_cmd[PATH_MAX];
 
-static const char update_cmd[] = "/usr/bin/fwupdate.sh %s";
+static const char update_fw_cmd[] = "/usr/bin/fwupdate.sh %s";
+static const char update_fpga_cmd[] = "/usr/bin/fpga-update.sh %s";
 
 static int runned = 0,
            result = 0,
@@ -196,7 +200,8 @@ typedef struct {
 } rescue_request_t;
 
 static rescue_request_t reqs[] = {
-    { "/upload",        RESCUE_REQUEST_UPDATE },
+    { "/upload_fw",     RESCUE_REQUEST_UPDATE_FW },
+    { "/upload_fpga",   RESCUE_REQUEST_UPDATE_FPGA },
     { "/abort",         RESCUE_REQUEST_ABORT },
     { "/back",          RESCUE_REQUEST_BACK },
     { "/log",           RESCUE_REQUEST_LOG },
@@ -296,10 +301,14 @@ static int begin_request_handler (struct mg_connection *conn)
     h = history;
     pthread_mutex_unlock(&mutex);
 
+    update_cmd = update_fpga_cmd;
+
     switch (state) {
     case RESCUE_STATE_HOME:
         switch (req) {
-        case RESCUE_REQUEST_UPDATE:
+        case RESCUE_REQUEST_UPDATE_FW:
+            update_cmd = update_fw_cmd;
+        case RESCUE_REQUEST_UPDATE_FPGA:
             upload = 0;
             if (mg_upload(conn, "/tmp") == 1 && upload) {
                 process(conn,exec_cmd,1,RESCUE_STATE_PROGRESS);
@@ -349,10 +358,8 @@ exit:
 
 static void upload_handler (struct mg_connection *conn, const char *path)
 {
-    const char *cmd = update_cmd;
-
     if (path) upload = 1;
-    snprintf(exec_cmd, sizeof(exec_cmd) - 1, cmd, path);
+    snprintf(exec_cmd, sizeof(exec_cmd) - 1, update_cmd, path);
     printf("%s uploaded.\n", path);
 }
 

@@ -134,8 +134,8 @@ static const char log_action_html[] =
     "</form> <br>\r\n";
 
 static const char upload_file_html[] =
-    "<form method=POST action=\"/upload\" enctype=\"multipart/form-data\">\r\n"
-        "<input type=submit value=\"Upload\" /> <input type=file name=\"file\" size=50 />\r\n"
+    "<form method=POST action=\"/%s\" enctype=\"multipart/form-data\">\r\n"
+        "%s: <input type=submit value=\"Upload\" /> <input type=file name=\"file\" size=50 />\r\n"
     "</form>\r\n";
 
 void http_home_page (struct mg_connection *conn, int history)
@@ -164,9 +164,13 @@ void http_home_page (struct mg_connection *conn, int history)
         fclose(f);
     }
 
-    mg_printf(conn, reboot_action_html);
+    //mg_printf(conn, reboot_action_html);
 
-    mg_printf(conn, upload_file_html);
+    mg_printf(conn, upload_file_html, "upload_fw","Firmware image:");
+
+    mg_printf(conn,"<br><br>\r\n");
+
+    mg_printf(conn, upload_file_html, "upload_fpga", "FPGA image:");
 
     if (history) {
         mg_printf(conn,"<br><br>\r\n");
