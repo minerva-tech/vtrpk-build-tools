@@ -32,4 +32,4 @@ log "Erasing /dev/mtd0 ..."
 
 log "Writing FPGA image ..."
 
-/bin/dd if=/home/default/rtpk_top.bin seek=32 bs=65536 of=/dev/mtdblock0 || exit_error "FAILED" 4
+/bin/dd if=$1 seek=32 bs=65536 of=/dev/mtdblock0 || exit_error "FAILED" 4
