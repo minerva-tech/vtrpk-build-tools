@@ -166,11 +166,11 @@ void http_home_page (struct mg_connection *conn, int history)
 
     //mg_printf(conn, reboot_action_html);
 
-    mg_printf(conn, upload_file_html, "upload_fw","Firmware image:");
+    mg_printf(conn, upload_file_html, "upload_fw","Firmware image");
 
     mg_printf(conn,"<br><br>\r\n");
 
-    mg_printf(conn, upload_file_html, "upload_fpga", "FPGA image:");
+    mg_printf(conn, upload_file_html, "upload_fpga", "FPGA image");
 
     if (history) {
         mg_printf(conn,"<br><br>\r\n");
