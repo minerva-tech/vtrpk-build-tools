@@ -208,10 +208,10 @@ BR2_INIT_BUSYBOX=y
 #
 # BR2_INIT_NONE is not set
 BR2_ROOTFS_DEVICE_TABLE="target/generic/device_table.txt"
-BR2_ROOTFS_STATIC_DEVICE_TABLE="target/device/dm365-border-min/device_table_dev.txt"
+BR2_ROOTFS_STATIC_DEVICE_TABLE="target/device/dm365-vrtpk/device_table_dev.txt"
 # BR2_ROOTFS_SKELETON_DEFAULT is not set
 BR2_ROOTFS_SKELETON_CUSTOM=y
-BR2_ROOTFS_SKELETON_CUSTOM_PATH="target/device/dm365-border-min/skeleton"
+BR2_ROOTFS_SKELETON_CUSTOM_PATH="target/device/dm365-vrtpk/skeleton"
 BR2_ROOTFS_POST_BUILD_SCRIPT=""
 
 #
@@ -222,7 +222,7 @@ BR2_PACKAGE_BUSYBOX=y
 BR2_BUSYBOX_VERSION_1_20_X=y
 # BR2_PACKAGE_BUSYBOX_SNAPSHOT is not set
 BR2_BUSYBOX_VERSION="1.20.2"
-BR2_PACKAGE_BUSYBOX_CONFIG="target/device/dm365-border-min/bb.config"
+BR2_PACKAGE_BUSYBOX_CONFIG="target/device/dm365-vrtpk/bb.config"
 # BR2_PACKAGE_BUSYBOX_SHOW_OTHERS is not set
 # BR2_PACKAGE_BUSYBOX_WATCHDOG is not set
 
@@ -957,7 +957,7 @@ BR2_LINUX_KERNEL_VERSION="custom"
 BR2_LINUX_KERNEL_PATCH=""
 # BR2_LINUX_KERNEL_USE_DEFCONFIG is not set
 BR2_LINUX_KERNEL_USE_CUSTOM_CONFIG=y
-BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE="target/device/dm365-border-min/kernel.config"
+BR2_LINUX_KERNEL_CUSTOM_CONFIG_FILE="target/device/dm365-vrtpk/kernel.config"
 # BR2_LINUX_KERNEL_UIMAGE is not set
 # BR2_LINUX_KERNEL_APPENDED_UIMAGE is not set
 BR2_LINUX_KERNEL_ZIMAGE=y
