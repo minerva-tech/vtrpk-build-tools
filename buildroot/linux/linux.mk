@@ -40,6 +40,10 @@ ifeq ($(BR2_LINUX_KERNEL_UBOOT_IMAGE),y)
 	LINUX_DEPENDENCIES += host-uboot-tools
 endif
 
+ifeq ($(BR2_TARGET_ROOTFS_CPIO),y)
+	LINUX_DEPENDENCIES += rootfs-cpio
+endif
+
 LINUX_MAKE_FLAGS = \
 	HOSTCC="$(HOSTCC)" \
 	HOSTCFLAGS="$(HOSTCFLAGS)" \
