@@ -56,7 +56,7 @@ ubl_nand.bin: start.S $(UBL_SOURCES) $(UBL_LINKERSCRIPT)
 	-rm -f ubl
 
 ubl_mmc.bin: start.S $(UBL_SOURCES) $(UBL_LINKERSCRIPT)
-	$(CC) -DARM270_DDR216_OSC24 -DUBL_SD_MMC $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) -o ubl
+	$(CC) -DARM270_DDR216_OSC24 -DUBL_SD_MMC $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) sdmmc.c sdmmcboot.c -o ubl
 	$(OBJDUMP) -dS ubl > ubl_mmc.asm
 	$(OBJCOPY) $(OBJCOPYFLAGS) -O binary ubl $@
 	-rm -f ubl
