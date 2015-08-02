@@ -1,6 +1,6 @@
 #
 # Automatically generated make config: don't edit
-# Buildroot 2012.08-gc5a6bc5-dirty Configuration
+# Buildroot 2012.08-g3f84b5f-dirty Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
 BR2_arm=y
@@ -211,7 +211,7 @@ BR2_ROOTFS_DEVICE_TABLE="target/generic/device_table.txt"
 BR2_ROOTFS_STATIC_DEVICE_TABLE="target/device/dm365-vrtpk/device_table_dev.txt"
 # BR2_ROOTFS_SKELETON_DEFAULT is not set
 BR2_ROOTFS_SKELETON_CUSTOM=y
-BR2_ROOTFS_SKELETON_CUSTOM_PATH="target/device/dm365-vrtpk/skeleton"
+BR2_ROOTFS_SKELETON_CUSTOM_PATH="target/device/dm365-vrtpk/skeleton-vrtpk"
 BR2_ROOTFS_POST_BUILD_SCRIPT=""
 
 #
@@ -479,6 +479,7 @@ BR2_PACKAGE_MTD_MTDINFO=y
 # BR2_PACKAGE_USB_MODESWITCH is not set
 # BR2_PACKAGE_USBUTILS is not set
 # BR2_PACKAGE_WIPE is not set
+BR2_PACKAGE_VRTPK=y
 # BR2_PACKAGE_XFSPROGS is not set
 # BR2_PACKAGE_YAVTA is not set
 

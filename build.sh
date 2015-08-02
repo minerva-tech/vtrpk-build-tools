@@ -40,4 +40,4 @@ buildroot ()
 
 buildroot minerva_sdmmc
 buildroot vrtpk
-buildroot vrtvk
+#buildroot vrtvk
