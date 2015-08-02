@@ -13,3 +13,5 @@ sleep 2
 /usr/sbin/udhcpd
 
 /etc/init.d/S50dropbear start
+
+/usr/bin/fw_write.sh
