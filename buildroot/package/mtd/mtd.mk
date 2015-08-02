@@ -86,6 +86,9 @@ define MTD_INSTALL_TARGET_CMDS
  for f in $(MTD_TARGETS_y) ; do \
   install -D -m 0755 $(@D)/$$f $(TARGET_DIR)/usr/sbin/$${f##*/} ; \
  done
+ cp -f $(@D)/lib/libmtd.a $(STAGING_DIR)/usr/lib
+ mkdir -p $(STAGING_DIR)/usr/include/mtd
+ cp -f $(@D)/include/libmtd.h $(STAGING_DIR)/usr/include/mtd
 endef
 
 $(eval $(generic-package))
