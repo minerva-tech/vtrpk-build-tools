@@ -90,6 +90,9 @@ define UBOOT_BUILD_CMDS
 	$(TARGET_CONFIGURE_OPTS) $(UBOOT_CONFIGURE_OPTS) 	\
 		$(MAKE) -C $(@D) $(UBOOT_MAKE_OPTS) 		\
 		$(UBOOT_MAKE_TARGET)
+	$(TARGET_CONFIGURE_OPTS) $(UBOOT_CONFIGURE_OPTS) 	\
+		$(MAKE) -C $(@D) $(UBOOT_MAKE_OPTS) 		\
+		$(UBOOT_MAKE_TARGET) tools
 endef
 
 define UBOOT_BUILD_OMAP_IFT
@@ -101,6 +104,7 @@ define UBOOT_INSTALL_IMAGES_CMDS
 	cp -dpf $(@D)/$(UBOOT_BIN) $(BINARIES_DIR)/
 	$(if $(BR2_TARGET_UBOOT_SPL),
 		cp -dpf $(@D)/$(BR2_TARGET_UBOOT_SPL_NAME) $(BINARIES_DIR)/)
+	cp -dpf $(@D)/tools/uflash/uflash output/host/usr/bin
 endef
 
 define UBOOT_INSTALL_OMAP_IFT_IMAGE
