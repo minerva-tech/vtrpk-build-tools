@@ -1,5 +1,6 @@
 config BR2_PACKAGE_MONGOOSE
 	bool "mongoose"
+	select vrtpk
 	help
 	  Mongoose is easy to use web server.
 	  It also can be used as embedded web server library
