@@ -2,6 +2,7 @@
 
 buildroot ()
 {
+    [ -f Output/${1}/.built ] && return
     if [ ! -d Output/$1 ]; then
 	mkdir -p Output/$1
 	for i in board boot Config.in configs dl docs fs linux Makefile package support target toolchain
@@ -10,10 +11,11 @@ buildroot ()
 	done
     fi
     pushd Output/$1
-    cp -f configs/${1}_defconfig .config
+    cp configs/${1}_defconfig .config
     make oldconfig
-    make
+    make || exit 1
     popd
+    touch Output/${1}/.built
 }
 
-buildroot vrtpk
+buildroot minerva_sdmmc
