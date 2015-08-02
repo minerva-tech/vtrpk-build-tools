@@ -27,7 +27,7 @@ null::sysinit:/bin/hostname -F /etc/hostname
 
 null::sysinit:/bin/echo "Linux is ready!" > /dev/kmsg
 
-null::sysinit:/usr/bin/vrtvk_app 115200 1 2500 &
+#null::sysinit:/usr/bin/vrtvk_app 115200 1 2500 &
 
 null::sysinit:/usr/bin/late_init.sh &
 
