@@ -15,10 +15,11 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-print_green_msg "Creating new partitions table..."
-sudo /usr/sbin/sgdisk $1 -Z || exit 2
-sudo /usr/sbin/sgdisk $1 -g || exit 2
-sudo /usr/sbin/sgdisk $1 -a 256 --new=1:2M:+64M || exit 11
+if [ -z "$2" ]; then
+    print_red_msg "Error: platform is not specified"
+    exit 1
+fi
 
 print_green_msg "Writing bootloaders..."
-sudo Output/minerva_sdmmc/output/host/usr/bin/uflash -d $1 -p DM3XX -u bootloader/ubl_mmc.bin -b Output/minerva_sdmmc/output/images/u-boot.bin
+sudo Output/minerva_sdmmc/output/host/usr/bin/uflash -d $1 -p DM3XX -u bootloader/ubl_mmc.bin -b Output/minerva_sdmmc/output/images/u-boot.bin || exit 5
+

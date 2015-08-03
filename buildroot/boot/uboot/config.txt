@@ -1,4 +1,3 @@
-bootargs=console=ttyS0,115200n8 rw
 bootcmd=fatload mmc 0 0x80700000 uImage; bootm 0x80700000
 bootdelay=1
 baudrate=115200
@@ -6,6 +5,5 @@ bootfile="uImage"
 stdin=serial
 stdout=serial
 stderr=serial
-ethact=dm9000
-videostd=ntsc
+
 

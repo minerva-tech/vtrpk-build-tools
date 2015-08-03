@@ -5,7 +5,7 @@
 cd /mnt/1
 
 [ ! -f Image.sha1 ] && exit 2
-sha1sum zImage.sha1 || exit 3
+sha1sum Image.sha1 || exit 3
 
 [ ! -f ubl_nand.bin ] && exit 4
 sha1sum ubl_nand.bin.sha1 || exit 5
@@ -16,5 +16,5 @@ sha1sum ubl_nand.bin.sha1 || exit 5
 cd /
 umount /mnt/1 || exit 8
 
-cd /sys/class/leds/error/trigger
+cd /sys/class/leds/error
 cat max_brightness > brightness

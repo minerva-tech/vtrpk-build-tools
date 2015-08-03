@@ -34,6 +34,7 @@ buildroot ()
     cp configs/${1}_defconfig .config
     make oldconfig || exit 1
     make || exit 1
+    cd output/images
     popd
     touch Output/${1}/.built
 }
