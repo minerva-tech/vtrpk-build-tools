@@ -15,11 +15,6 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-if [ -z "$2" ]; then
-    print_red_msg "Error: platform is not specified"
-    exit 1
-fi
-
 print_green_msg "Writing bootloaders..."
 sudo Output/minerva_sdmmc/output/host/usr/bin/uflash -d $1 -p DM3XX -u bootloader/ubl_mmc.bin -b Output/minerva_sdmmc/output/images/u-boot.bin || exit 5
 
