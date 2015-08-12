@@ -15,7 +15,7 @@ buildroot ()
     [ -f Output/${1}/.built ] && return
     if [ ! -d Output/$1 ]; then
 	mkdir -p Output/$1
-	for i in board boot Config.in configs dl docs fs linux Makefile package support target toolchain .rebuild.sh
+	for i in board boot Config.in configs dl docs fs linux Makefile package support target toolchain rebuild.sh
 	do
 	    ln -s ../../buildroot/$i Output/${1}/$i
 	done
