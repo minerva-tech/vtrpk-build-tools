@@ -3,7 +3,7 @@
 for i in x-tools bootloader
 do
     cd $i
-    if [ ! -f .built]; then
+    if [ ! -f .built ]; then
 	./build.sh || exit 1
 	touch .built
     fi
