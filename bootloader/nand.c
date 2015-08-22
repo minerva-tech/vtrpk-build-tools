@@ -503,6 +503,7 @@ Uint32 NAND_writeOnlySpareBytesOfPage(NAND_InfoHandle hNandInfo, Uint32 block, U
 // Generic routine to write a page of data to NAND
 Uint32 NAND_writePage(NAND_InfoHandle hNandInfo, Uint32 block, Uint32 page, Uint8 *src)
 {
+#ifndef NAND_DISABLE_WRITE_OP
   Uint32 i,currPagePtr, nextPagePtr;
   //FIXME: the size of this array should be determined by the calcECCByteCnt  
   Uint8 calcECC[16];
@@ -604,6 +605,9 @@ Uint32 NAND_writePage(NAND_InfoHandle hNandInfo, Uint32 block, Uint32 page, Uint
 
   // Return status check result  
   return LOCAL_flashWaitForStatus(hNandInfo, NAND_TIMEOUT);
+#else
+    return E_PASS;
+#endif
 }
 
 #ifdef DM35X_STANDARD
@@ -617,6 +621,7 @@ Uint32 NAND_writePage(NAND_InfoHandle hNandInfo, Uint32 block, Uint32 page, Uint
 
 Uint32 NAND_writePage_ubl_header(NAND_InfoHandle hNandInfo, Uint32 block, Uint32 page, Uint8 *src)
 {
+#ifndef NAND_DISABLE_WRITE_OP
   Uint32 i,j,currPagePtr, nextPagePtr;
   //FIXME: the size of this array should be determined by the calcECCByteCnt  
   Uint8 calcECC[16];
@@ -729,6 +734,9 @@ Uint32 NAND_writePage_ubl_header(NAND_InfoHandle hNandInfo, Uint32 block, Uint32
 
   // Return status check result  
   return LOCAL_flashWaitForStatus(hNandInfo, NAND_TIMEOUT);
+#else
+    return E_PASS;
+#endif
 }
 #endif
 

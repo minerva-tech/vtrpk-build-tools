@@ -162,6 +162,7 @@ static void DEVICE_NAND_ECC_calculate(NAND_InfoHandle hNandInfo, Uint8 *data, Ui
 // Do conversion from 8 10-bit ECC values from HW (in 16 byte input) to 10 8-bit continguous values for storage in spare bytes
 static void DEVICE_NAND_ECC_store(NAND_InfoHandle hNandInfo, Uint8 *spareBytes, Uint8 opNum, Uint8 *calcECC)
 {
+#ifndef NAND_DISABLE_WRITE_OP
   Uint32 out[3],in[4],i;
   
   for (i=0; i <DEVICE_NAND_ECC_info.calcECCByteCnt; i++)
@@ -180,6 +181,7 @@ static void DEVICE_NAND_ECC_store(NAND_InfoHandle hNandInfo, Uint8 *spareBytes, 
   {
     spareBytes[i + DEVICE_NAND_ECC_START_OFFSET + hNandInfo->spareBytesPerOp*opNum] = ((Uint8 *)out)[i];
   }
+#endif
 }
 
 static void DEVICE_NAND_ECC_enable(NAND_InfoHandle hNandInfo)
