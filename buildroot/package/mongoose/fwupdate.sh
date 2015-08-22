@@ -14,30 +14,9 @@ exit_error()
     exit    $2
 }
 
-dec_2_hex()
-{
-	n=`expr "$1" "/" "256"`
-	k=`expr "$n" "*" "256"`
-	x=`expr "$1" "-" "$k"`
-	x0=`printf %02x $x`
-	
-	m=`expr "$n" "/" "256"`
-	k=`expr "$m" "*" "256"`
-	x=`expr "$n" "-" "$k"`
-	x1=`printf %02x $x`
-	
-	n=`expr "$m" "/" "256"`
-	k=`expr "$n" "*" "256"`
-	x=`expr "$m" "-" "$k"`
-	x2=`printf %02x $x`
-	
-	m=`expr "$n" "/" "256"`
-	k=`expr "$m" "*" "256"`
-	x=`expr "$n" "-" "$k"`
-	x3=`printf %02x $x`
-}
-
 rm -f ${LOG}
+
+/sbin/modprobe davinci_nand
 
 log "Writing firmware ..."
 
