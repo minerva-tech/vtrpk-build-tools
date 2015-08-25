@@ -202,7 +202,7 @@ int usb_detect (void)
     dregs = (davinci_usb_regs_t *)DAVINCI_USB0_BASE;
     dregs->ctrlr = 1;
 
-    mdelay(5);
+    mdelay(10);
 
     /* Read zero if e.g. not clocked */
     if (!dregs->version) {
