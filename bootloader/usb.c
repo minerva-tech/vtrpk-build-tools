@@ -202,7 +202,7 @@ int usb_detect (void)
     dregs = (davinci_usb_regs_t *)DAVINCI_USB0_BASE;
     dregs->ctrlr = 1;
 
-    mdelay(10);
+    mdelay(5);
 
     /* Read zero if e.g. not clocked */
     if (!dregs->version) {
@@ -217,7 +217,7 @@ int usb_detect (void)
 
 	/* Check if device is in b-peripheral mode */
 	b = musbr->devctl;
-#if 0
+#if 1
     DEBUG_printString("!!! devctl ");
     DEBUG_printHexInt(b);
     DEBUG_printString("\r\n");
@@ -227,5 +227,5 @@ int usb_detect (void)
         return -1;
     }
 
-    return ((b >> 3) & 3);
+    return (((b & MUSB_DEVCTL_VBUS) == MUSB_DEVCTL_VBUS) ? 1 : 0);
 }

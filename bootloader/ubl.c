@@ -156,7 +156,7 @@ Uint32 rescue;
   DEBUG_printString(UBL_VERSION_STRING);
   DEBUG_printString("\r\n");
 
-  rescue = (usb_detect() > 1) ? 1 : 0;
+  rescue = !!usb_detect();
   if (rescue)
       DEBUG_printString("USB cable is attached, loading rescue image ...\r\n");
 
