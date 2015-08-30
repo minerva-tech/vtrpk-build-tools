@@ -26,8 +26,8 @@
 /dev/mtdblock	b	640	0	0	31	0	0	1	8
 
 # SCSI Devices
-#/dev/sda	b	640	0	0	8	0	0	0	-
-#/dev/sda	b	640	0	0	8	1	1	1	15
+/dev/sda	b	640	0	0	8	0	0	0	-
+/dev/sda	b	640	0	0	8	1	1	1	4
 #/dev/sdb	b	640	0	0	8	16	0	0	-
 #/dev/sdb	b	640	0	0	8	17	1	1	15
 
