@@ -34,6 +34,9 @@
 # I2C device nodes
 /dev/i2c-	c	666	0	0	89	0	0	1	1
 
+# Real Time Clock
+/dev/rtc0	c	666	0	0	254	0	0	0	-
+
 # v4l device nodes
 /dev/video0	c	666	0	0	81	2	0	-
 /dev/video1	c	666	0	0	81	4	0	-
