@@ -21,3 +21,5 @@ rm -f ${LOG}
 log "Writing firmware ..."
 
 /usr/bin/fw_write -l kernel -f $1 -a 80008000 -m a1aced66 -v | tee -a ${LOG} || exit_error "FAILED" 1
+
+/sbin/rmmod davinci_nand
