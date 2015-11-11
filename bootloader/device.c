@@ -374,7 +374,7 @@ Uint32 DEVICE_init()
     GPIO->SETDATA45 = 0x08870000;
     GPIO->CLRDATA45 = 0x17788000;
 #endif
-    GPIO->DIR45 = 0xE0027FFF;
+    GPIO->DIR45 = 0xE0007FFF;
  
   if (status == E_PASS) status |= DEVICE_PLL1Init();
 
