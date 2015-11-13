@@ -43,7 +43,7 @@
 /dev/video4	c	666	0	0	81	5	0	-
 /dev/video3	c	666	0	0	81	7	0	-
 /dev/video4	c	666	0	0	81	8	0	-
-/dev/media	c	644	0	0	254	0	0	0	1
+/dev/media	c	644	0	0	253	0	0	0	1
 
 /dev/v4l-subdev0	c	666	0	0	81	0	0	-
 /dev/v4l-subdev1	c	666	0	0	81	1	0	-
@@ -53,7 +53,7 @@
 /dev/v4l-subdev5	c	666	0	0	81	10	0	-
 
 # usb cdc modem
-/dev/ttyGS	c	660	0	0	253	0	0	1	1
+#/dev/ttyGS	c	660	0	0	253	0	0	1	1
 
 # custom
 /dev/fpga_fifo	c	660	0	0	10	60	0	0	-
