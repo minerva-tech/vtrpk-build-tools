@@ -15,6 +15,8 @@ sha1sum ubl_nand.bin.sha1 || exit 5
 /bin/echo out > /sys/class/gpio/gpio81/direction
 /bin/echo 1 > /sys/class/gpio/gpio81/value
 
+/sbin/modprobe davinci_nand
+
 /usr/bin/fw_write -l bootloader -f ubl_nand.bin -v -a 20 -m a1aced00 || exit 6
 /usr/bin/fw_write -l rescue -f Image -v -a 80008000 -m a1aced66 || exit 7
 

@@ -6,7 +6,7 @@ sleep 2
 
 /sbin/modprobe m25p80
 
-/sbin/modprobe davinci_nand
+#/sbin/modprobe davinci_nand
 
 /sbin/modprobe davinci && /sbin/modprobe g_ether && /sbin/ifup -a
 
