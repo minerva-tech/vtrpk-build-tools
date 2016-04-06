@@ -1,6 +1,6 @@
 #
 # Automatically generated make config: don't edit
-# Buildroot 2012.08-g3f84b5f-dirty Configuration
+# Buildroot 2012.08-gf03f600-dirty Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
 BR2_arm=y
@@ -311,6 +311,7 @@ BR2_PACKAGE_BUSYBOX_CONFIG="target/device/dm365-vrtpk/bb.config"
 # BR2_PACKAGE_MPFR is not set
 # BR2_PACKAGE_LIBTOOL is not set
 # BR2_PACKAGE_M4 is not set
+# BR2_PACKAGE_PKGCONF is not set
 # BR2_PACKAGE_PKG_CONFIG is not set
 # BR2_PACKAGE_SSTRIP is not set
 
@@ -390,7 +391,7 @@ BR2_PACKAGE_BUSYBOX_CONFIG="target/device/dm365-vrtpk/bb.config"
 # BR2_PACKAGE_GPSD is not set
 # BR2_PACKAGE_GVFS is not set
 # BR2_PACKAGE_HWDATA is not set
-# BR2_PACKAGE_I2C_TOOLS is not set
+BR2_PACKAGE_I2C_TOOLS=y
 # BR2_PACKAGE_INPUT_EVENT_DAEMON is not set
 # BR2_PACKAGE_INPUT_TOOLS is not set
 # BR2_PACKAGE_IOSTAT is not set
@@ -451,7 +452,9 @@ BR2_PACKAGE_MTD_MTDINFO=y
 # BR2_PACKAGE_MTD_UBIRSVOL is not set
 # BR2_PACKAGE_MTD_UBIUPDATEVOL is not set
 # BR2_PACKAGE_NANOCOM is not set
-# BR2_PACKAGE_NTFS_3G is not set
+BR2_PACKAGE_NTFS_3G=y
+# BR2_PACKAGE_NTFS_3G_ENCRYPTED is not set
+# BR2_PACKAGE_NTFS_3G_NTFSPROGS is not set
 # BR2_PACKAGE_OFONO is not set
 # BR2_PACKAGE_OPEN2300 is not set
 # BR2_PACKAGE_OPENOCD is not set
