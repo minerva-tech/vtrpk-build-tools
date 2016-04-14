@@ -26,10 +26,10 @@
 /dev/mtdblock	b	640	0	0	31	0	0	1	8
 
 # SCSI Devices
-/dev/sda	b	640	0	0	8	0	0	0	-
-/dev/sda	b	640	0	0	8	1	1	1	4
-#/dev/sdb	b	640	0	0	8	16	0	0	-
-#/dev/sdb	b	640	0	0	8	17	1	1	15
+/dev/sda	b	660	0	0	8	0	0	0	-
+/dev/sda	b	660	0	0	8	1	1	1	4
+#/dev/sdb	b	660	0	0	8	16	0	0	-
+#/dev/sdb	b	660	0	0	8	17	1	1	15
 
 # I2C device nodes
 /dev/i2c-	c	666	0	0	89	0	0	1	1
@@ -54,6 +54,8 @@
 
 # usb cdc modem
 #/dev/ttyGS	c	660	0	0	253	0	0	1	1
+
+/dev/fuse	c	666	0	0	10	229	0	0	-
 
 # custom
 /dev/fpga_fifo	c	660	0	0	10	60	0	0	-
