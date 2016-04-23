@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 for i in x-tools bootloader
 do
@@ -20,6 +20,7 @@ buildroot ()
 	    ln -s ../../buildroot/$i Output/${1}/$i
 	done
     fi
+
     pushd Output/$1
     if [ -n "$2" -a -d ../${2}/output/host ]; then
 	mkdir -p output
