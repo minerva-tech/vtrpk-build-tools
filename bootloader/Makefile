@@ -36,7 +36,7 @@ SDH_SRC = $(UTIL_DIR)/sdh.c
 UART_TEST = $(UTIL_DIR)/uart_test
 UART_TEST_SRC = $(UTIL_DIR)/uart_test.c
 
-all: ubl_nand.bin ubl_uart.bin ubl_mmc.bin sft.bin $(SHOEHORN) $(SFH) $(SDH) $(UART_TEST)
+all: ubl_nand.bin ubl_nand_2.bin ubl_uart.bin ubl_mmc.bin sft.bin $(SHOEHORN) $(SFH) $(SDH) $(UART_TEST)
 
 .PHONY : clean
 clean:
@@ -52,6 +52,12 @@ ubl_nand.bin: start.S $(UBL_SOURCES) $(UBL_LINKERSCRIPT)
 	$(CC) -DARM270_DDR216_OSC24 -DUBL_NAND -DDMA -DNAND_DISABLE_WRITE_OP -DSILENT $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) -o ubl
 	#$(CC) -DARM270_DDR216_OSC24 -DUBL_NAND -DDMA -DNAND_DISABLE_WRITE_OP $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) -o ubl
 	$(OBJDUMP) -dS ubl > ubl_nand.asm
+	$(OBJCOPY) $(OBJCOPYFLAGS) -O binary ubl $@
+	-rm -f ubl
+
+ubl_nand_2.bin: start.S $(UBL_SOURCES) $(UBL_LINKERSCRIPT)
+	$(CC) -DARM270_DDR216_OSC24 -DUBL_NAND -DDMA -DNAND_DISABLE_WRITE_OP -DSILENT -DMACH_TYPE=9000 $(CFLAGS) -Wl,-T$(UBL_LINKERSCRIPT) $(UBL_SOURCES) -o ubl
+	$(OBJDUMP) -dS ubl > ubl_nand_2.asm
 	$(OBJCOPY) $(OBJCOPYFLAGS) -O binary ubl $@
 	-rm -f ubl
 

@@ -81,7 +81,10 @@ Uint32 gEntryPoint;
 * Global Function Definitions                               *
 ************************************************************/
 
-#define MACH_TYPE_DAVINCI_DM365_EVM    1939
+#ifndef MACH_TYPE
+#define MACH_TYPE 1939 // MACH_TYPE_DAVINCI_DM365_EVM
+#endif
+
 #define ADDR_ATAGS 0x80000100
 
 // Main entry point
@@ -107,7 +110,7 @@ void main (void)
 
     APPEntry = (void (*)(unsigned, unsigned, unsigned)) gEntryPoint;
 
-    (*APPEntry)(0, MACH_TYPE_DAVINCI_DM365_EVM, ADDR_ATAGS);
+    (*APPEntry)(0, MACH_TYPE, ADDR_ATAGS);
     for(;;);
 
 }
