@@ -81,7 +81,9 @@ Uint32 gEntryPoint;
 * Global Function Definitions                               *
 ************************************************************/
 
-#ifndef MACH_TYPE
+#ifdef MACH_TYPE_OGONEK_2
+#define MACH_TYPE 9000
+#else
 #define MACH_TYPE 1939 // MACH_TYPE_DAVINCI_DM365_EVM
 #endif
 
@@ -175,6 +177,10 @@ Uint32 rescue;
     if (NANDBOOT_copy(rescue) != E_PASS)
     {
       DEBUG_printString("NAND Boot failed.\r\n");
+      if (!rescue) {
+          DEBUG_printString("Trying rescue image ...\r\n");
+          NANDBOOT_copy(1);
+      }
       LOCAL_bootAbort();
     }
   }

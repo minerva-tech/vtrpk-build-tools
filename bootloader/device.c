@@ -353,6 +353,33 @@ Uint32 DEVICE_init()
        bank4: 79
        bank5: 83-86,88-90,92 */
 
+#ifdef MACH_TYPE_OGONEK_2
+
+    DEVICE_pinmuxControl(0,0xFFFFFFFF,0x00000000);  // All Video Inputs
+    DEVICE_pinmuxControl(1,0xFFFFFFFF,0x00430000);  // All as gpio
+    DEVICE_pinmuxControl(2,0xFFFFFFFF,0x000000DA);  // EMIFA
+    DEVICE_pinmuxControl(3,0xFFFFFFFF,0x36BD0000);
+    DEVICE_pinmuxControl(4,0xFFFFFFFF,0x00154000);
+
+    GPIO->SETDATA01 = 0x000041C0;
+    GPIO->CLRDATA01 = 0xEC00B62C | 0x00000800;
+    GPIO->DIR01 = 0x13FF5093;
+
+    GPIO->SETDATA23 = 0x00000002;
+    GPIO->CLRDATA23 = 0x0003FFC1; // turn USB 5V off
+    GPIO->DIR23 = 0xFEFC003C;
+
+#ifdef NAND_DISABLE_WRITE_OP
+    GPIO->SETDATA45 = 0x08850000;
+    GPIO->CLRDATA45 = 0x177A8000;
+#else
+    GPIO->SETDATA45 = 0x08870000;
+    GPIO->CLRDATA45 = 0x17788000;
+#endif
+    GPIO->DIR45 = 0xE0007FFF;
+
+#else
+
     DEVICE_pinmuxControl(0,0xFFFFFFFF,0x00000000);  // All Video Inputs
     DEVICE_pinmuxControl(1,0xFFFFFFFF,0x00430000);  // All as gpio
     DEVICE_pinmuxControl(2,0xFFFFFFFF,0x000000DA);  // EMIFA
@@ -375,6 +402,8 @@ Uint32 DEVICE_init()
     GPIO->CLRDATA45 = 0x17788000;
 #endif
     GPIO->DIR45 = 0xE0007FFF;
+
+#endif
  
   if (status == E_PASS) status |= DEVICE_PLL1Init();
 
