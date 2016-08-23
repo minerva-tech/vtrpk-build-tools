@@ -41,6 +41,7 @@ enum {
 enum {
     RESCUE_REQUEST_UPDATE_FW,
     RESCUE_REQUEST_UPDATE_FPGA,
+    RESCUE_REQUEST_DATE_TIME,
     RESCUE_REQUEST_ABORT,
     RESCUE_REQUEST_BACK,
     RESCUE_REQUEST_LOG,
@@ -60,6 +61,7 @@ static char exec_cmd[PATH_MAX];
 
 static const char update_fw_cmd[] = "/usr/bin/fwupdate.sh %s";
 static const char update_fpga_cmd[] = "/usr/bin/fpga-update.sh %s";
+static const char date_time_cmd[] = "/usr/bin/date-time.sh %s %s %s %s %s %s";
 
 static int runned = 0,
            result = 0,
@@ -69,6 +71,8 @@ static int runned = 0,
            exec_pid = -1,
            upload = 0,
            req = RESCUE_REQUEST_UNKNOWN;
+
+static char buf[1024];
 
 extern char **environ;
 typedef void (*sighandler_t)(int);
@@ -202,6 +206,7 @@ typedef struct {
 static rescue_request_t reqs[] = {
     { "/upload_fw",     RESCUE_REQUEST_UPDATE_FW },
     { "/upload_fpga",   RESCUE_REQUEST_UPDATE_FPGA },
+    { "/date_time",     RESCUE_REQUEST_DATE_TIME },
     { "/abort",         RESCUE_REQUEST_ABORT },
     { "/back",          RESCUE_REQUEST_BACK },
     { "/log",           RESCUE_REQUEST_LOG },
@@ -224,8 +229,8 @@ static int parse_request (struct mg_request_info *info)
     return RESCUE_REQUEST_UNKNOWN;
 }
 
-static char * form_values[4];
-static char * form_names[4];
+static char * form_values[10];
+static char * form_names[10];
 
 static const char form_prefix[] = "Content-Disposition: form-data; name=";
 //static const char form_boundary[] = "------WebKitFormBoundary";
@@ -315,6 +320,21 @@ static int begin_request_handler (struct mg_connection *conn)
                 goto exit;
             }
             break;
+        case RESCUE_REQUEST_DATE_TIME:
+            form_names[0] = "\"DD\"";
+            form_names[1] = "\"MM\"";
+            form_names[2] = "\"YYYY\"";
+            form_names[3] = "\"hh\"";
+            form_names[4] = "\"mm\"";
+            form_names[5] = "\"ss\"";
+            form_names[6] = NULL;
+            parse_form(conn);
+            snprintf(exec_cmd, sizeof(exec_cmd) - 1, date_time_cmd,
+                     form_values[0], form_values[1], form_values[2],
+                     form_values[3], form_values[4], form_values[5]);
+            printf("#### %s\n",exec_cmd);
+            process(conn,exec_cmd,1,RESCUE_STATE_PROGRESS);
+            goto exit;
         case RESCUE_REQUEST_LOG:
             state = RESCUE_STATE_LOG;
             http_log_page(conn);

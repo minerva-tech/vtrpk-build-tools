@@ -138,6 +138,13 @@ static const char upload_file_html[] =
         "%s: <input type=submit value=\"Upload\" /> <input type=file name=\"file\" size=50 />\r\n"
     "</form>\r\n";
 
+static const char date_time_html[] =
+    "<form method=POST action=\"/date_time\" enctype=\"multipart/form-data\" >\r\n"
+        "<b>Date:</b> <input type=text name=\"DD\" size=2 /> <input type=text name=\"MM\" size=2 /> <input type=text name=\"YYYY\" size=4 /> (DD/MM/YYYY) <br>\r\n"
+        "<b>Time:</b><input type=text name=\"hh\" size=2 /> <input type=text name=\"mm\" size=2 /> <input type=text name=\"ss\" size=2 /> (HH/MM/SS) <br>\r\n"
+        "<input type=submit value=\"Apply\" />\r\n"
+    "</form> <br>\r\n";
+
 void http_home_page (struct mg_connection *conn, int history)
 {
     FILE *f;
@@ -171,6 +178,10 @@ void http_home_page (struct mg_connection *conn, int history)
     mg_printf(conn,"<br><br>\r\n");
 
     mg_printf(conn, upload_file_html, "upload_fpga", "FPGA image");
+
+    mg_printf(conn,"<br><br>\r\n");
+
+    mg_printf(conn, date_time_html);
 
     if (history) {
         mg_printf(conn,"<br><br>\r\n");
