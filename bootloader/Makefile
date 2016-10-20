@@ -36,7 +36,7 @@ SDH_SRC = $(UTIL_DIR)/sdh.c
 UART_TEST = $(UTIL_DIR)/uart_test
 UART_TEST_SRC = $(UTIL_DIR)/uart_test.c
 
-all: ubl_nand.bin ubl_nand_2.bin ubl_uart.bin ubl_mmc.bin sft.bin $(SHOEHORN) $(SFH) $(SDH) $(UART_TEST)
+all: ubl_nand.bin ubl_nand_1.bin ubl_uart.bin ubl_mmc.bin sft.bin $(SHOEHORN) $(SFH) $(SDH) $(UART_TEST)
 
 .PHONY : clean
 clean:

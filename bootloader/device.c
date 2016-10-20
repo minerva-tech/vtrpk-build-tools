@@ -369,6 +369,11 @@ Uint32 DEVICE_init()
     GPIO->CLRDATA23 = 0x0003FFC1; // turn USB 5V off
     GPIO->DIR23 = 0xFEFC003C;
 
+    // disable gio28 pull-down, USB overcurrent
+    i = SYSTEM->PUPDCTL0;
+    i &= ~0x10000000;
+    SYSTEM->PUPDCTL0 = i;
+
 #ifdef NAND_DISABLE_WRITE_OP
     GPIO->SETDATA45 = 0x08850000;
     GPIO->CLRDATA45 = 0x177A8000;
